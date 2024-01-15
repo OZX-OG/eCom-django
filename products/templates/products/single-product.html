@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}product name !!{% endblock %}
+
+        
+{% block content %}
+<!-- content -->
+
+
+<!-- breadcrumb-section -->
+<div class="breadcrumb-section breadcrumb-bg">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 offset-lg-2 text-center">
+				<div class="breadcrumb-text">
+					<h2><span class="orange-text">خير بلادك</span></h2>
+					<h1>{{ product.categories }}</h1>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- end breadcrumb section -->
+
+<!-- single product -->
+<div class="single-product mt-150 mb-150">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-5">
+				<div class="single-product-img">
+					<img src="{{ product.produc_image.url }}" alt="">
+				</div>
+			</div>
+			<div class="col-md-7">
+				<div class="single-product-content">
+					<h3>{{ product }}</h3>
+					<p class="single-product-pricing"><span>من كل لتر</span> <span style="text-decoration: line-through;">{{ product.anchor_price|add:"0" }} د.م</span> {{ product.price }} د.م</p>
+					<p>{{ product.discription }}</p>
+					<div class="single-product-form">
+						<form action="index.html">
+							<input type="number" placeholder="0">
+						</form>
+						<a href="{% url 'cart' %}" class="cart-btn"><i class="fas fa-shopping-cart"></i> أضف إلى السلة</a>
+						<p><strong>فئة: </strong>{{ product.categories }}</p>
+					</div>
+					<h4>شارك:</h4>
+					<ul class="product-share">
+						<li><a href=""><i class="fab fa-facebook-f"></i></a></li>
+						<li><a href=""><i class="fab fa-twitter"></i></a></li>
+						<li><a href=""><i class="fab fa-google-plus-g"></i></a></li>
+						<li><a href=""><i class="fab fa-linkedin"></i></a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- end single product -->
+
+<!-- products -->
+<div id="product" class="product-section mt-150 mb-150">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 offset-lg-2 text-center">
+				<div class="section-title">	
+					<h3> <span class="orange-text">منتجات</span>  ذات صله </h3>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="product-filters">
+					<ul>
+						<li data-filter="*">All</li>
+						{% for categorie in categories %}
+							{% if categorie == product.categories %}
+								<li data-filter=".{{ categorie }}" class="active"  >{{ categorie }}</li>
+							{% else %}
+								<li data-filter=".{{ categorie }}" >{{ categorie }}</li>
+							{% endif %}
+						{% endfor %}
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<div class="row product-lists">
+            {% for product in products %}
+                <div class="col-lg-4 col-md-6 text-center {{ product.categories }}">
+                    <div class="single-product-item">
+                        <div class="product-image">
+                            <a href="{% url 'single_product' slug=product.slug  %}"><img src="{{ product.produc_image.url }}" alt=""></a>
+                        </div>
+                        <h3>{{ product.name }}</h3>
+                        <p class="product-price"><span>لكل لتر</span><span style="text-decoration: line-through;">{{ product.anchor_price|add:"0" }} د.م</span> {{ product.price|add:"0" }} د.م </p>
+                        <a href="{% url 'cart' %}" class="cart-btn"><i class="fas fa-shopping-cart"></i> أضف إلى السلة</a>
+                        <a href="{% url 'single_product' slug=product.slug  %}" class="cart-btn-border">شراء الآن</a>
+                    </div>
+                </div>
+            {% endfor %}
+		</div>
+	</div>
+</div>
+<!-- end products -->
+
+
+<!-- content -->
+{% endblock %}
+

@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block sign_css %} {% endblock sign_css %}
+        
+{% block content %}
+<!-- content -->
+
+<!-- hero area -->
+<div class="hero-area hero-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9 offset-lg-2 text-center">
+                <div class="hero-text">
+                    <div class="hero-text-tablecell">
+                        <h4><span class="orange-text">أملو و العسل</span></h4>
+                        <h1 id="sub-title">مواد طبيعية لذيذة</h1>
+                        <div class="hero-btns">
+                            <a href="#product" class="boxed-btn">المجموعات</a>
+                            <a href="contact.html" class="bordered-btn">Contact Us</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end hero area -->
+
+<!-- features list section -->
+<div class="list-section pt-80 pb-80">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                <div class="list-box d-flex align-items-center">
+                    <div class="list-icon">
+                        <i class="fas fa-shipping-fast"></i>
+                    </div>
+                    <div class="content">
+                        <h3>ًالشحن مجانا</h3>
+                        <p>في كل مكان بالمغرب</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                <div class="list-box d-flex align-items-center">
+                    <div class="list-icon">
+                        <i class="fas fa-phone-volume"></i>
+                    </div>
+                    <div class="content">
+                        <h3>دعم 24/7</h3>
+                        <p>احصل على الدعم طوال اليوم</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="list-box d-flex justify-content-start align-items-center">
+                    <div class="list-icon">
+                        <i class="fas fa-sync"></i>
+                    </div>
+                    <div class="content">
+                        <h3>استرداد / Refund</h3>
+                        <p>استرد أموالك خلال 3 أيام!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- end features list section -->
+
+    <!-- products -->
+<div id="product" class="product-section mt-150 mb-150">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2 text-center">
+                <div class="section-title">	
+                    <h3> منتجا <span class="orange-text">تنا</span></h3>
+                </div>
+            </div>
+        </div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="product-filters">
+					<ul>
+						<li data-filter="*" class="active"  >All</li>
+						{% for categorie in categories %}
+                            <li data-filter=".{{ categorie }}" >{{ categorie }}</li>
+						{% endfor %}
+					</ul>
+				</div>
+			</div>
+		</div>
+
+        <div class="row product-lists">
+            {% for product in products %}
+                <div class="col-lg-4 col-md-6 text-center {{product.categories}}">
+                    <div class="single-product-item">
+                        <div class="product-image">
+                            <a href="{% url 'single_product' slug=product.slug  %}"><img src="{{ product.produc_image.url }}" alt=""></a>
+                        </div>
+                        <h3>{{ product }}</h3>
+                        <p class="product-price"><span>لكل لتر</span><span style="text-decoration: line-through;">{{ product.anchor_price|add:"0" }} د.م</span> {{ product.price|add:"0" }} د.م </p>
+                        <a href="{% url 'cart' %}" class="cart-btn"><i class="fas fa-shopping-cart"></i> أضف إلى السلة</a>
+                        <a href="{% url 'single_product' slug=product.slug  %}" class="cart-btn-border">شراء الآن</a>
+                    </div>
+                </div>
+            {% endfor %}
+            <div class="col-lg-4 col-md-6 text-center strawberry">
+                <div class="single-product-item">
+                    <div class="product-image">
+                        <a href=""><img src="{% static 'img/products/product-img-1.jpg' %}" alt=""></a>
+                    </div>
+                    <h3><a href="" style="color: black;">Strawberry</a></h3>
+                    <p class="product-price"><span>لكل لتر</span><span style="text-decoration: line-through;">249 د.م</span> 200 د.م </p>
+                    <a href="{% url 'cart' %}" class="cart-btn"><i class="fas fa-shopping-cart"></i> أضف إلى السلة</a>
+                    <a href="" class="cart-btn-border">شراء الآن</a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 text-center berry">
+                <div class="single-product-item">
+                    <div class="product-image">
+                        <a href=""><img src="{% static 'img/products/product-img-2.jpg' %}" alt=""></a>
+                    </div>
+                    <h3>Berry</h3>
+                    <p class="product-price"><span>لكل لتر</span><span style="text-decoration: line-through;">249 د.م</span> 200 د.م </p>
+                    <a href="{% url 'cart' %}" class="cart-btn"><i class="fas fa-shopping-cart"></i> أضف إلى السلة</a>
+                    <a href="" class="cart-btn-border">شراء الآن</a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 text-center lemon">
+                <div class="single-product-item">
+                    <div class="product-image">
+                        <a href=""><img src="{% static 'img/products/product-img-3.jpg' %}" alt=""></a>
+                    </div>
+                    <h3>Lemon</h3>
+                    <p class="product-price"><span>لكل لتر</span><span style="text-decoration: line-through;">249 د.م</span> 200 د.م </p>
+                    <a href="{% url 'cart' %}" class="cart-btn"><i class="fas fa-shopping-cart"></i> أضف إلى السلة</a>
+                    <a href="" class="cart-btn-border">شراء الآن</a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 text-center">
+                <div class="single-product-item">
+                    <div class="product-image">
+                        <a href=""><img src="{% static 'img/products/product-img-4.jpg' %}" alt=""></a>
+                    </div>
+                    <h3>Avocado</h3>
+                    <p class="product-price"><span>لكل لتر</span><span style="text-decoration: line-through;">249 د.م</span> 200 د.م </p>
+                    <a href="{% url 'cart' %}" class="cart-btn"><i class="fas fa-shopping-cart"></i> أضف إلى السلة</a>
+                    <a href="" class="cart-btn-border">شراء الآن</a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 text-center green-apple">
+                <div class="single-product-item">
+                    <div class="product-image">
+                        <a href=""><img src="{% static 'img/products/product-img-5.jpg' %}" alt=""></a>
+                    </div>
+                    <h3>Green Apple</h3>
+                    <p class="product-price"><span>لكل لتر</span><span style="text-decoration: line-through;">249 د.م</span> 200 د.م </p>
+                    <a href="{% url 'cart' %}" class="cart-btn"><i class="fas fa-shopping-cart"></i> أضف إلى السلة</a>
+                    <a href="" class="cart-btn-border">شراء الآن</a>
+                </div>
+            </div>
+
+
+
+
+        </div>
+    </div>
+</div>
+<!-- end products -->
+
+<!-- cart banner section -->
+<section  class="cart-banner pt-100 pb-100">
+    <div class="container">
+        <div class="row clearfix">
+            <!--Image Column-->
+            <div class="image-column col-lg-6">
+                <div class="image">
+                    <div class="price-box">
+                        <div class="inner-price">
+                            <span class="price">
+                                <strong>30%</strong> <br> من كل لتر
+                            </span>
+                        </div>
+                    </div>
+                    <img src="{% static 'img/a.jpg' %}" alt="">
+                </div>
+            </div>
+            <!--Content Column-->
+            <div  class="content-column col-lg-6">
+                <h3>  <span class="orange-text">عروض</span> هدى شهر </h3>
+                <h4>ex: أملو</h4>
+                <div class="text">Quisquam minus maiores repudiandae nobis, minima saepe id, fugit ullam similique! Beatae, minima quisquam molestias facere ea. Perspiciatis unde omnis iste natus error sit voluptatem accusant</div>
+                <!--Countdown Timer-->
+                <div class="time-counter"><div class="time-countdown clearfix" data-countdown="2024/2/01"><div class="counter-column"><div class="inner"><span class="count">00</span>Days</div></div> <div class="counter-column"><div class="inner"><span class="count">00</span>Hours</div></div>  <div class="counter-column"><div class="inner"><span class="count">00</span>Mins</div></div>  <div class="counter-column"><div class="inner"><span class="count">00</span>Secs</div></div></div></div>
+                <a href="cart.html" class="cart-btn mt-3"><i class="fas fa-shopping-cart"></i>  أضف إلى السلة  </a>
+                <a id="about-us" href="cart.html" class="cart-btn-border mt-3">مزيد من المعلومات</a>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- end cart banner section -->
+
+<div  class="abt-section mt-80 mb-80 ">
+    <div class="container">
+        <div class="row">
+
+            <div class=" col-md-12 text-center">
+                <div class="abt-text">
+                    <p class="top-sub">منذ عام 2000</p>
+                    <h2>نحن <span class="orange-text">خير بلادك</span></h2>
+                    <p><h4>حتى المفرج كدعاية أو أعضاء. في لا كتلة شركة الطيران ولا بقية الصناعة. الاستثمار العقاري يجب أن يوضع موضع التنفيذ. ولكي يتغلب على الألم تتغلب عليه الحكمة، لكنه يريد ذلك أحياناً. للعاملين في كرة القدم.						</h4></p>
+                    <p>من المهم جدًا أن ينتبه العميل إلى عملية إزالة الدهون. بحكمة، من السهل عليه صد قدر أقل من الحقيقة، وبجهد أقل المرونة التي نقودها.	</p>
+                    <a href="about.html" class="boxed-btn mt-4">know more</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- content -->
+{% endblock %}
+
+{% block sign_scripts %}  {% endblock sign_scripts %}

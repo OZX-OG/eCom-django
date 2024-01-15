@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khire Bladk | {% block title %}{% endblock %}</title>
+
+    <!-- favicon -->
+	<link rel="shortcut icon" type="image/png" href="{% static 'img/icon.png' %}">
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
+
+	<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/all.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/owl.carousel.css' %}">
+	<link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}">
+	<link rel="stylesheet" href="{% static 'css/animate.css' %}">
+	<link rel="stylesheet" href="{% static 'css/meanmenu.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+	<link rel="stylesheet" href="{% static 'css/main.css' %}"> 
+
+    {% block sign_css %} {% endblock sign_css %}
+</head>
+<body>
+    
+{% include 'partials/_navbar.html' %}
+
+{% block content %}
+ 
+{% endblock %}
+
+{% include 'partials/_footer.html' %}
+
+<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/jquery-1.11.3.min.js' %}"></script>
+<script src="{% static 'js/jquery.countdown.js' %}"></script>
+<script src="{% static 'js/jquery.isotope-3.0.6.min.js' %}"></script>
+<script src="{% static 'js/waypoints.js' %}"></script>
+<script src="{% static 'js/owl.carousel.min.js' %}"></script>
+<script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+<script src="{% static 'js/jquery.meanmenu.min.js' %}"></script>
+<script src="{% static 'js/sticker.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script>
+{% block sign_scripts %}{% endblock sign_scripts %}
+        
+</body>
+</html>

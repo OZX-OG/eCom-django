@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}shop{% endblock %}
+
+        
+{% block content %}
+
+<!-- breadcrumb-section -->
+<div class="breadcrumb-section breadcrumb-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2 text-center">
+                <div class="breadcrumb-text">
+                    <h2><span class="orange-text">خير بلادك</span></h2>
+                    <h1>دفع</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end breadcrumb section -->
+
+<!-- check out section -->
+<div class="checkout-section mt-150 mb-150">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="checkout-accordion-wrap">
+                    <div class="accordion" id="accordionExample">
+                        <div class="card single-accordion">
+                        <div class="card-header" id="headingOne">
+                            <h5 class="mb-0">
+                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                معلومات الزبون
+                            </button>
+                            </h5>
+                        </div>
+
+                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                            <div class="card-body">
+                            <div class="billing-address-form">
+                                <form action="index.html">
+                                    <p><input type="text" placeholder="اسم"></p>
+                                    <p><input type="email" placeholder="بريد إلكتروني"></p>
+                                    <p><input type="text" placeholder="المدينة"></p>
+                                    <p><input type="tel" placeholder="هاتف"></p>
+                                </form>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="order-details-wrap">
+                    <table class="order-details">
+                        <thead>
+                            <tr>
+                                <th>Your order Details</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody class="order-details-body">
+                            <tr>
+                                <td>Product</td>
+                                <td>Total</td>
+                            </tr>
+                            <tr>
+                                <td>Strawberry x (5)</td>
+                                <td>$85.00</td>
+                            </tr>
+                            <tr>
+                                <td>Berry x (5)</td>
+                                <td>$70.00</td>
+                            </tr>
+                            <tr>
+                                <td>Lemon</td>
+                                <td>$35.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br>
+                    <table class="order-details">
+                        <thead>
+                            <tr>
+                                <th>Your order Details</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody class="checkout-details">
+                            <tr>
+                                <td>إجمالي قيمة المنتجات :</td>
+                                <td>$190</td>
+                            </tr>
+                            <tr>
+                                <td>شحن :</td>
+                                <td>$50</td>
+                            </tr>
+                            <tr>
+                                <td><h4><span class="orange-text" >المجموع :</span></></td>
+                                <td>$240</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <a href="#" class="boxed-btn">Place Order</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end check out section -->
+
+
+{% endblock %}
