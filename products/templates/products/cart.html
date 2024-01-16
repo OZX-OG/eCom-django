@@ -13,7 +13,7 @@
 		<div class="row">
 			<div class="col-lg-8 offset-lg-2 text-center">
 				<div class="breadcrumb-text">
-					<h2><span class="orange-text">خير بلادك</span></h2>
+					<h2><span class="orange-text">خير بلادي </span></h2>
 					<h1>السلة</h1>
 				</div>
 			</div>
@@ -39,33 +39,32 @@
 								<th class="product-total">المجموع</th>
 							</tr>
 						</thead>
-						<tbody>
-							<tr class="table-body-row">
-								<td class="product-remove"><a href="#"><i class="far fa-window-close"></i></a></td>
-								<td class="product-image"><img src="{% static 'img/products/product-img-1.jpg' %}" alt=""></td>
-								<td class="product-name">Strawberry</td>
-								<td class="product-price">$85</td>
-								<td class="product-quantity"><input type="number" placeholder="0"></td>
-								<td class="product-total">1</td>
-							</tr>
-							<tr class="table-body-row">
-								<td class="product-remove"><a href="#"><i class="far fa-window-close"></i></a></td>
-								<td class="product-image"><img src="{% static 'img/products/product-img-2.jpg' %}" alt=""></td>
-								<td class="product-name">Berry</td>
-								<td class="product-price">$70</td>
-								<td class="product-quantity"><input type="number" placeholder="0"></td>
-								<td class="product-total">1</td>
-							</tr>
-							<tr class="table-body-row">
-								<td class="product-remove"><a href="#"><i class="far fa-window-close"></i></a></td>
-								<td class="product-image"><img src="{% static 'img/products/product-img-3.jpg' %}" alt=""></td>
-								<td class="product-name">Lemon</td>
-								<td class="product-price">$35</td>
-								<td class="product-quantity"><input type="number" placeholder="0"></td>
-								<td class="product-total">1</td>
-							</tr>
+					<tbody>
+							
+							{% for item in items %}
+								<tr class="table-body-row">
+									<td class="product-remove"><a href="#"><i class="far fa-window-close"></i></a></td>
+									<td class="product-image"><img src="{{ item.product.produc_image.url }}" alt=""></td>
+									<td class="product-name">
+										<a style="color: #874713;" href="{% url 'single_product' slug=item.product.slug %}">{{item.product.name}}</a>
+									</td>
+									<td class="product-price">د.م {{ item.product.price|add:'0' }}</td>
+									<td class="product-quantity"><input type="number" value="{{ item.quantity }}" placeholder="0"></td>
+									<td class="product-total">د.م {{ item.get_total|add:'0' }}</td>
+								</tr>
+							{% endfor %}
 						</tbody>
 					</table>
+					
+					{% if not items  %}
+						<div class="d-flex justify-content-center cart-buttons" >
+							<h3>Theres no product</h3>
+						</div>
+						<div class="d-flex justify-content-center cart-buttons" >
+							<a href="{% url 'shop' %}" class="boxed-btn">Go to store</a>
+						</div>
+					{% endif %}
+
 				</div>
 			</div>
 
@@ -81,15 +80,15 @@
 						<tbody>
 							<tr class="total-data">
 								<td><strong>المجموع الفرعي: </strong></td>
-								<td>$500</td>
+								<td>د.م {{ order.get_cart_total|add:'0'  }}</td>
 							</tr>
 							<tr class="total-data">
 								<td><strong>شحن: </strong></td>
-								<td>$45</td>
+								<td>د.م 0</td>
 							</tr>
 							<tr class="total-data">
-								<td><strong>المجموع: </strong></td>
-								<td>$545</td>
+                                <td><h4><span class="orange-text" >المجموع :</span></td>
+								<td>د.م {{ order.get_cart_total|add:'0' }}</td>
 							</tr>
 						</tbody>
 					</table>
@@ -98,7 +97,7 @@
 						<a href="{% url 'checkout' %}" class="boxed-btn black">الدفع</a>
 					</div>
 				</div>
-
+<!-- 
 				<div class="coupon-section">
 					<h3>Apply Coupon</h3>
 					<div class="coupon-form-wrap">
@@ -107,7 +106,7 @@
 							<p><input type="submit" value="Apply"></p>
 						</form>
 					</div>
-				</div>
+				</div> -->
 			</div>
 		</div>
 	</div>

@@ -12,7 +12,7 @@
         <div class="row">
             <div class="col-lg-8 offset-lg-2 text-center">
                 <div class="breadcrumb-text">
-                    <h2><span class="orange-text">خير بلادك</span></h2>
+                    <h2><span class="orange-text">خير بلادي </span></h2>
                     <h1>دفع</h1>
                 </div>
             </div>
@@ -32,7 +32,7 @@
                         <div class="card-header" id="headingOne">
                             <h5 class="mb-0">
                             <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                معلومات الزبون
+                                ( الدفع عند الاستلام ) معلومات الزبون
                             </button>
                             </h5>
                         </div>
@@ -60,49 +60,41 @@
                     <table class="order-details">
                         <thead>
                             <tr>
-                                <th>Your order Details</th>
-                                <th>Price</th>
+                                <th>منتج</th>
+                                <th>المجموع</th>
                             </tr>
                         </thead>
                         <tbody class="order-details-body">
-                            <tr>
-                                <td>Product</td>
-                                <td>Total</td>
-                            </tr>
-                            <tr>
-                                <td>Strawberry x (5)</td>
-                                <td>$85.00</td>
-                            </tr>
-                            <tr>
-                                <td>Berry x (5)</td>
-                                <td>$70.00</td>
-                            </tr>
-                            <tr>
-                                <td>Lemon</td>
-                                <td>$35.00</td>
-                            </tr>
+                            
+                            {% for item in items %}
+                                <tr>
+                                    <td>{{item}} x ({{item.quantity}})</td>
+                                    <td>د.م {{item.get_total|add:'0'}}</td>
+                                </tr>
+                            {% endfor %}
+
                         </tbody>
                     </table>
                     <br>
                     <table class="order-details">
                         <thead>
                             <tr>
-                                <th>Your order Details</th>
-                                <th>Price</th>
+                                <th>تفاصيل طلبك </th>
+                                <th>سعر</th>
                             </tr>
                         </thead>
                         <tbody class="checkout-details">
                             <tr>
                                 <td>إجمالي قيمة المنتجات :</td>
-                                <td>$190</td>
+								<td>د.م {{ order.get_cart_total|add:'0'  }}</td>
                             </tr>
                             <tr>
                                 <td>شحن :</td>
-                                <td>$50</td>
+								<td>د.م 0</td>
                             </tr>
                             <tr>
-                                <td><h4><span class="orange-text" >المجموع :</span></></td>
-                                <td>$240</td>
+                                <td><h4><span class="orange-text" >المجموع :</span></td>
+								<td>د.م {{ order.get_cart_total|add:'0' }}</td>
                             </tr>
                         </tbody>
                     </table>
