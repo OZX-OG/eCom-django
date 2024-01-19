@@ -44,6 +44,115 @@
 <script src="{% static 'js/jquery.meanmenu.min.js' %}"></script>
 <script src="{% static 'js/sticker.js' %}"></script>
 <script src="{% static 'js/main.js' %}"></script>
+<script>
+var updateBtns = document.getElementsByClassName('update-cart')
+
+for (i = 0; i < updateBtns.length; i++) {
+    updateBtns[i].addEventListener('click', function () {
+        var productSlug = this.dataset.product
+        var action = this.dataset.action
+        console.log('productSlug:', productSlug, 'Action:', action)
+        console.log('USER:', user)
+
+        if (user == 'AnonymousUser') {
+            addCookieItem(productSlug, action)
+        } else {
+            updateUserOrder(productSlug, action)
+        }
+    })
+}
+
+function updateUserOrder(productSlug, action) {
+    console.log('User is authenticated, sending data...')
+
+    var url = '/products/update_item'
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken,
+        },
+        body: JSON.stringify({ 'productSlug': productSlug, 'action': action })
+    })
+        .then((response) => {
+            return response.json();
+        })
+        .then((data) => {
+            // Update the cart information on the page
+			console.log(data)
+            updateCartInfo(data.cart_items_count, data.cart_total);
+        });
+}
+
+function addCookieItem(productSlug, action) {
+    console.log('User is not authenticated')
+
+    if (action == 'add') {
+        if (cart[productSlug] == undefined) {
+            cart[productSlug] = { 'quantity': 1 }
+
+        } else {
+            cart[productSlug]['quantity'] += 1
+        }
+    }
+
+    if (action == 'remove') {
+        cart[productSlug]['quantity'] -= 1
+
+        if (cart[productSlug]['quantity'] <= 0) {
+            console.log('Item should be deleted')
+            delete cart[productSlug];
+        }
+    }
+    console.log('CART:', cart)
+    document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/"
+
+    // Update the cart information on the page
+    updateCartInfo(calculateTotalItems(cart), calculateCartTotal(cart));
+}
+
+// Function to update the cart information on the page
+function updateCartInfo(cartItemsCount, cartTotal) {
+    // Update the cart count in the navbar
+    var cartCountElement = document.querySelector('.cart-count');
+	console.log(cartCountElement)
+	console.log(cartItemsCount)
+	console.log(cartTotal)
+
+
+	if (cartCountElement) {
+        cartCountElement.innerText = cartItemsCount;
+    }
+
+    // Update the cart total on your page
+    document.getElementById('cart-total').innerText = cartTotal;
+}
+
+// Function to calculate the total number of items in the cart
+function calculateTotalItems(cart) {
+    var totalItems = 0;
+    for (var key in cart) {
+        if (cart.hasOwnProperty(key)) {
+            totalItems += cart[key]['quantity'];
+        }
+    }
+    return totalItems;
+}
+
+// Function to calculate the total value of items in the cart
+function calculateCartTotal(cart) {
+    var total = 0;
+    for (var key in cart) {
+        if (cart.hasOwnProperty(key)) {
+            total += cart[key]['quantity'] * cart[key]['price']; // You need to have the price property in your cart items
+        }
+    }
+    return total;
+}
+
+
+</script>
 {% block sign_scripts %}{% endblock sign_scripts %}
         
 </body>
