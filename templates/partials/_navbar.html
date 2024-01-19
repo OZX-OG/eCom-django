@@ -24,16 +24,32 @@
                     <!-- menu start -->
                     <nav class="main-menu">
                         <ul>
-                            <li class="current-list-item"><a id="home" href="{% url 'index' %}">رئيسي</a></li>
-                            <li><a id="about" href="{% url 'index' %}#about-us">من نحن</a></li>
+                            <li 
+                            {% if '/' == request.path %}
+                                class="current-list-item"
+                            {% endif %} 
+                            ><a id="home" href="{% url 'index' %}">رئيسي</a></li>
+                            <li ><a id="about" href="{% url 'index' %}#about-us">من نحن</a></li>
                             <li><a id="contact" href="contact.html">اتصل بنا</a></li>
-                            <li><a id="shop" href="{% url 'shop' %}">متجر</a></li>
+                            <li
+                            {% if '/products/' == request.path %}
+                                class="current-list-item"
+                            {% endif %} 
+                            ><a id="shop" href="{% url 'shop' %}">متجر</a></li>
 
-                            <li>
+                            <li >
                                 <div class="header-icons">
-                                    <a class="shopping-cart" href="{% url 'cart' %}">
+                                    <a 
+                                    {% if '/products/cart' == request.path %}
+                                        style="color: #F28123;" 
+                                    {% endif %} 
+                                    class="shopping-cart" href="{% url 'cart' %}">
                                         <i class="fas fa-shopping-cart"></i>
-                                        <span class="cart-count">3</span>
+                                        {% if cartItems %}
+                                            <span class="cart-count">{{cartItems}}</span>
+                                        {% else  %}
+                                            <span class="cart-count"></span>
+                                        {% endif  %}
                                     </a>
                                     <a class="mobile-hide search-bar-icon" href="#"><i class="fas fa-search"></i></a>
                                 </div>

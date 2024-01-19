@@ -38,10 +38,11 @@
 					<p class="single-product-pricing"><span>من كل لتر</span> <span style="text-decoration: line-through;">{{ product.anchor_price|add:"0" }} د.م</span> {{ product.price }} د.م</p>
 					<p>{{ product.discription }}</p>
 					<div class="single-product-form">
-						<form action="index.html">
-							<input type="number" placeholder="0">
+						<form id="myForm" method="POST">
+							{% csrf_token %}
+							<input type="number" id="product" name="quantity" data-slug="{{ product.slug }}" value="1">
 						</form>
-						<a href="{% url 'cart' %}" class="cart-btn"><i class="fas fa-shopping-cart"></i> أضف إلى السلة</a>
+						<a class="cart-btn" onclick="document.getElementById('myForm').submit();"><i class="fas fa-shopping-cart"></i> أضف إلى السلة</a>
 						<p><strong>فئة: </strong>{{ product.categories }}</p>
 					</div>
 					<h4>شارك:</h4>
@@ -88,23 +89,24 @@
 
 		<div class="row product-lists">
             {% for product in products %}
-                <div class="col-lg-4 col-md-6 text-center {{ product.categories }}">
-                    <div class="single-product-item">
-                        <div class="product-image">
-                            <a href="{% url 'single_product' slug=product.slug  %}"><img src="{{ product.produc_image.url }}" alt=""></a>
-                        </div>
-                        <h3>{{ product.name }}</h3>
-                        <p class="product-price"><span>لكل لتر</span><span style="text-decoration: line-through;">{{ product.anchor_price|add:"0" }} د.م</span> {{ product.price|add:"0" }} د.م </p>
-                        <a href="{% url 'cart' %}" class="cart-btn"><i class="fas fa-shopping-cart"></i> أضف إلى السلة</a>
-                        <a href="{% url 'single_product' slug=product.slug  %}" class="cart-btn-border">شراء الآن</a>
-                    </div>
-                </div>
+                {% if product.is_active %}
+					<div class="col-lg-4 col-md-6 text-center {{product.categories}}">
+						<div class="single-product-item">
+							<div class="product-image">
+								<a href="{% url 'single_product' slug=product.slug  %}"><img src="{{ product.produc_image.url }}" alt=""></a>
+							</div>
+							<h3>{{ product }}</h3>
+							<p class="product-price"><span>لكل لتر</span><span style="text-decoration: line-through;">{{ product.anchor_price|add:"0" }} د.م</span> {{ product.price|add:"0" }} د.م </p>
+							<a data-product="{{product.slug}}" data-action="add" class="cart-btn update-cart"><i class="fas fa-shopping-cart"></i> أضف إلى السلة</a>
+							<a href="{% url 'single_product' slug=product.slug  %}" class="cart-btn-border">شراء الآن</a>
+						</div>
+					</div>
+                {% endif %}
             {% endfor %}
 		</div>
 	</div>
 </div>
 <!-- end products -->
-
 
 <!-- content -->
 {% endblock %}

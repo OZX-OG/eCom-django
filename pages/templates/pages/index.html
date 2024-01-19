@@ -97,110 +97,71 @@
 		</div>
 
         <div class="row product-lists">
-            {% for product in products %}
-                <div class="col-lg-4 col-md-6 text-center {{product.categories}}">
-                    <div class="single-product-item">
-                        <div class="product-image">
-                            <a href="{% url 'single_product' slug=product.slug  %}"><img src="{{ product.produc_image.url }}" alt=""></a>
+            {% for product_info in discounted_products %}
+                {% if product_info.product.is_active %}
+                    <div class="col-lg-4 col-md-6 text-center {{product_info.product.categories}}">
+                        <div class="single-product-item">
+                            <div class="product-image">
+                                <a href="{% url 'single_product' slug=product_info.product.slug  %}"><img src="{{ product_info.product.produc_image.url }}" alt=""></a>
+                            </div>
+                            <h3>{{ product_info.product }}</h3>
+                            <p class="product-price"><span>لكل لتر</span><span style="text-decoration: line-through;">{{ product_info.product.anchor_price|add:"0" }} د.م</span> {{ product_info.discounted_price|add:"0" }} د.م </p>
+                            <a data-product="{{product_info.product.slug}}" data-action="add" class="cart-btn update-cart"><i class="fas fa-shopping-cart"></i> أضف إلى السلة</a>
+                            <a href="{% url 'single_product' slug=product_info.product.slug  %}" class="cart-btn-border">شراء الآن</a>
                         </div>
-                        <h3>{{ product }}</h3>
-                        <p class="product-price"><span>لكل لتر</span><span style="text-decoration: line-through;">{{ product.anchor_price|add:"0" }} د.م</span> {{ product.price|add:"0" }} د.م </p>
-                        <a href="{% url 'cart' %}" class="cart-btn"><i class="fas fa-shopping-cart"></i> أضف إلى السلة</a>
-                        <a href="{% url 'single_product' slug=product.slug  %}" class="cart-btn-border">شراء الآن</a>
                     </div>
-                </div>
+                {% endif %}
             {% endfor %}
-            <div class="col-lg-4 col-md-6 text-center strawberry">
-                <div class="single-product-item">
-                    <div class="product-image">
-                        <a href=""><img src="{% static 'img/products/product-img-1.jpg' %}" alt=""></a>
-                    </div>
-                    <h3><a href="" style="color: black;">Strawberry</a></h3>
-                    <p class="product-price"><span>لكل لتر</span><span style="text-decoration: line-through;">249 د.م</span> 200 د.م </p>
-                    <a href="{% url 'cart' %}" class="cart-btn"><i class="fas fa-shopping-cart"></i> أضف إلى السلة</a>
-                    <a href="" class="cart-btn-border">شراء الآن</a>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 text-center berry">
-                <div class="single-product-item">
-                    <div class="product-image">
-                        <a href=""><img src="{% static 'img/products/product-img-2.jpg' %}" alt=""></a>
-                    </div>
-                    <h3>Berry</h3>
-                    <p class="product-price"><span>لكل لتر</span><span style="text-decoration: line-through;">249 د.م</span> 200 د.م </p>
-                    <a href="{% url 'cart' %}" class="cart-btn"><i class="fas fa-shopping-cart"></i> أضف إلى السلة</a>
-                    <a href="" class="cart-btn-border">شراء الآن</a>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 text-center lemon">
-                <div class="single-product-item">
-                    <div class="product-image">
-                        <a href=""><img src="{% static 'img/products/product-img-3.jpg' %}" alt=""></a>
-                    </div>
-                    <h3>Lemon</h3>
-                    <p class="product-price"><span>لكل لتر</span><span style="text-decoration: line-through;">249 د.م</span> 200 د.م </p>
-                    <a href="{% url 'cart' %}" class="cart-btn"><i class="fas fa-shopping-cart"></i> أضف إلى السلة</a>
-                    <a href="" class="cart-btn-border">شراء الآن</a>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 text-center">
-                <div class="single-product-item">
-                    <div class="product-image">
-                        <a href=""><img src="{% static 'img/products/product-img-4.jpg' %}" alt=""></a>
-                    </div>
-                    <h3>Avocado</h3>
-                    <p class="product-price"><span>لكل لتر</span><span style="text-decoration: line-through;">249 د.م</span> 200 د.م </p>
-                    <a href="{% url 'cart' %}" class="cart-btn"><i class="fas fa-shopping-cart"></i> أضف إلى السلة</a>
-                    <a href="" class="cart-btn-border">شراء الآن</a>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 text-center green-apple">
-                <div class="single-product-item">
-                    <div class="product-image">
-                        <a href=""><img src="{% static 'img/products/product-img-5.jpg' %}" alt=""></a>
-                    </div>
-                    <h3>Green Apple</h3>
-                    <p class="product-price"><span>لكل لتر</span><span style="text-decoration: line-through;">249 د.م</span> 200 د.م </p>
-                    <a href="{% url 'cart' %}" class="cart-btn"><i class="fas fa-shopping-cart"></i> أضف إلى السلة</a>
-                    <a href="" class="cart-btn-border">شراء الآن</a>
-                </div>
-            </div>
-
-
-
-
         </div>
     </div>
 </div>
 <!-- end products -->
 
+{% for product_info in discounted_products %}
+    <p>{{ product_info.product.name }} - Original Price: {{ product_info.product.price }} - 
+    {% if product_info.offer_percentage > 0 %}
+        Discounted Price: {{ product_info.discounted_price }} ({{ product_info.offer_percentage }}% off)
+    {% else %}
+        No Discount
+    {% endif %}
+    </p>
+{% endfor %}
+
 <!-- cart banner section -->
 <section  class="cart-banner pt-100 pb-100">
     <div class="container">
-        <div class="row clearfix">
-            <!--Image Column-->
-            <div class="image-column col-lg-6">
-                <div class="image">
-                    <div class="price-box">
-                        <div class="inner-price">
-                            <span class="price">
-                                <strong>30%</strong> <br> من كل لتر
-                            </span>
-                        </div>
-                    </div>
-                    <img src="{% static 'img/a.jpg' %}" alt="">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2 text-center">
+                <div class="section-title">	
+                    <h3><span class="orange-text">عروض</span> هدى شهر </h3>
                 </div>
             </div>
-            <!--Content Column-->
-            <div  class="content-column col-lg-6">
-                <h3>  <span class="orange-text">عروض</span> هدى شهر </h3>
-                <h4>ex: أملو</h4>
-                <div class="text">Quisquam minus maiores repudiandae nobis, minima saepe id, fugit ullam similique! Beatae, minima quisquam molestias facere ea. Perspiciatis unde omnis iste natus error sit voluptatem accusant</div>
-                <!--Countdown Timer-->
-                <div class="time-counter"><div class="time-countdown clearfix" data-countdown="2024/2/01"><div class="counter-column"><div class="inner"><span class="count">00</span>Days</div></div> <div class="counter-column"><div class="inner"><span class="count">00</span>Hours</div></div>  <div class="counter-column"><div class="inner"><span class="count">00</span>Mins</div></div>  <div class="counter-column"><div class="inner"><span class="count">00</span>Secs</div></div></div></div>
-                <a href="cart.html" class="cart-btn mt-3"><i class="fas fa-shopping-cart"></i>  أضف إلى السلة  </a>
-                <a id="about-us" href="cart.html" class="cart-btn-border mt-3">مزيد من المعلومات</a>
-            </div>
+        </div>
+        <div class="row clearfix">
+            {% for offer in offers %}
+                <!--Image Column-->
+                <div class="image-column col-lg-6">
+                    <div class="image">
+                        <div class="price-box">
+                            <div class="inner-price">
+                                <span class="price">
+                                    <strong>{{ offer.percentage}}%</strong> <br> من كل لتر
+                                </span>
+                            </div>
+                        </div>
+                        <img src="{{ offer.product.produc_image.url }}" alt="">
+                    </div>
+                </div>
+                <!--Content Column-->
+                <div  class="content-column col-lg-6">
+                    <h4>{{ offer }}</h4>
+                    <div class="text">{{ offer.product.discription }}</div>
+                    <!--Countdown Timer-->
+                    <div class="time-counter"><div class="time-countdown clearfix" data-countdown="{{ offer.finish_date|date:'Y/m/d' }}"><div class="counter-column"><div class="inner"><span class="count">00</span>Days</div></div> <div class="counter-column"><div class="inner"><span class="count">00</span>Hours</div></div>  <div class="counter-column"><div class="inner"><span class="count">00</span>Mins</div></div>  <div class="counter-column"><div class="inner"><span class="count">00</span>Secs</div></div></div></div>
+                    <a data-product="{{offer.product.slug}}" data-action="add" class="cart-btn update-cart"><i class="fas fa-shopping-cart"></i> أضف إلى السلة</a>
+                    <a id="about-us" href="{% url 'single_product' slug=offer.product.slug  %}" class="cart-btn-border mt-3">مزيد من المعلومات</a>
+                </div>
+            {% endfor %}
         </div>
     </div>
 </section>

@@ -1,6 +1,7 @@
 from django.db import models
 from autoslug import AutoSlugField
 from django.contrib.auth.models import User
+from phonenumber_field.modelfields import PhoneNumberField
 
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
@@ -17,7 +18,7 @@ class Categories(models.Model):
     def __str__(self):
         return self.categories
 
-class product(models.Model):
+class Product(models.Model):
     name = models.CharField(max_length = 100)
     discription = models.TextField()
 
@@ -56,7 +57,7 @@ class Order(models.Model):
         return total
 
 class OrderItem(models.Model):
-    product = models.ForeignKey(product, on_delete=models.SET_NULL, blank=True, null=True)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, blank=True, null=True)
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, blank=True, null=True)
     quantity = models.IntegerField(default=0, blank=True, null=True)
     date_added = models.DateTimeField(auto_now_add=True)
@@ -68,3 +69,24 @@ class OrderItem(models.Model):
     @property
     def get_total(self):
         return self.product.price * self.quantity
+    
+
+class ShippingAddress(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, blank=True, null=True)
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, blank=True, null=True)
+    name = models.CharField(max_length=255, null=True)
+    email = models.EmailField(max_length=255, null=True, blank=True)
+    city = models.CharField(max_length=255, null=True)
+    phone_number = PhoneNumberField()
+
+
+    def __str__(self):
+        return self.name
+
+class Offer(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, unique=True)
+    percentage = models.IntegerField()
+    finish_date = models.DateField()
+
+    def __str__(self):
+        return str(self.product)

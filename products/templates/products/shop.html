@@ -47,17 +47,21 @@
 
         <div class="row product-lists">
             {% for product in products %}
-                <div class="col-lg-4 col-md-6 text-center {{product.categories}}">
-                    <div class="single-product-item">
-                        <div class="product-image">
-                            <a href="{% url 'single_product' slug=product.slug  %}"><img src="{{ product.produc_image.url }}" alt=""></a>
+                {% if product.is_active %}
+
+                    <div class="col-lg-4 col-md-6 text-center {{product.categories}}">
+                        <div class="single-product-item">
+                            <div class="product-image">
+                                <a href="{% url 'single_product' slug=product.slug  %}"><img src="{{ product.produc_image.url }}" alt=""></a>
+                            </div>
+                            <h3>{{ product }}</h3>
+                            <p class="product-price"><span>لكل لتر</span><span style="text-decoration: line-through;">{{ product.anchor_price|add:"0" }} د.م</span> {{ product.price|add:"0" }} د.م </p>
+                            <a data-product="{{product.slug}}" data-action="add" class="cart-btn update-cart"><i class="fas fa-shopping-cart"></i> أضف إلى السلة</a>
+                            <a href="{% url 'single_product' slug=product.slug  %}" class="cart-btn-border">شراء الآن</a>
                         </div>
-                        <h3>{{ product }}</h3>
-                        <p class="product-price"><span>لكل لتر</span><span style="text-decoration: line-through;">{{ product.anchor_price|add:"0" }} د.م</span> {{ product.price|add:"0" }} د.م </p>
-                        <a href="{% url 'cart' %}" class="cart-btn"><i class="fas fa-shopping-cart"></i> أضف إلى السلة</a>
-                        <a href="{% url 'single_product' slug=product.slug  %}" class="cart-btn-border">شراء الآن</a>
                     </div>
-                </div>
+                    
+                {% endif %}
             {% endfor %}
         </div>
     </div>

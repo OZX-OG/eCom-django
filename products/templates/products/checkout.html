@@ -29,29 +29,31 @@
                 <div class="checkout-accordion-wrap">
                     <div class="accordion" id="accordionExample">
                         <div class="card single-accordion">
-                        <div class="card-header" id="headingOne">
-                            <h5 class="mb-0">
-                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                ( الدفع عند الاستلام ) معلومات الزبون
-                            </button>
-                            </h5>
-                        </div>
+                            <div class="card-header" id="headingOne">
+                                <h5 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    ( الدفع عند الاستلام ) معلومات الزبون
+                                </button>
+                                </h5>
+                            </div>
 
-                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
-                            <div class="card-body">
-                            <div class="billing-address-form">
-                                <form action="index.html">
-                                    <p><input type="text" placeholder="اسم"></p>
-                                    <p><input type="email" placeholder="بريد إلكتروني"></p>
-                                    <p><input type="text" placeholder="المدينة"></p>
-                                    <p><input type="tel" placeholder="هاتف"></p>
-                                </form>
+                            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <div class="billing-address-form">
+                                        <form action="{% url 'checkout' %}" method="POST">
+                                            {% csrf_token %}
+                                            <p><input type="text"  name="name"  placeholder="اسم" ></p>
+                                            <p><input type="email" name="email"  placeholder="بريد إلكتروني"></p>
+                                            <p><input type="text"  name="city"  placeholder="المدينة"></p>
+                                            <p><input type="tel"   name="phone"  placeholder="هاتف"></p>
+                                    </div>
+                                </div>
                             </div>
+                            <div class="alert alert-primary" role="alert">
+                                This is a primary alert—check it out!
                             </div>
-                        </div>
                         </div>
                     </div>
-
                 </div>
             </div>
 
@@ -98,7 +100,9 @@
                             </tr>
                         </tbody>
                     </table>
-                    <a href="#" class="boxed-btn">Place Order</a>
+                   
+                    <button type="submit" style="background-color: transparent; border-color: transparent;"> <a class="boxed-btn">Place Order</a></button>
+                    </form>
                 </div>
             </div>
         </div>

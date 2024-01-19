@@ -42,16 +42,22 @@
 					<tbody>
 							
 							{% for item in items %}
-								<tr class="table-body-row">
-									<td class="product-remove"><a href="#"><i class="far fa-window-close"></i></a></td>
-									<td class="product-image"><img src="{{ item.product.produc_image.url }}" alt=""></td>
-									<td class="product-name">
-										<a style="color: #874713;" href="{% url 'single_product' slug=item.product.slug %}">{{item.product.name}}</a>
-									</td>
-									<td class="product-price">د.م {{ item.product.price|add:'0' }}</td>
-									<td class="product-quantity"><input type="number" value="{{ item.quantity }}" placeholder="0"></td>
-									<td class="product-total">د.م {{ item.get_total|add:'0' }}</td>
-								</tr>
+							<tr class="table-body-row" data-id="{{item.id}}">
+								<td class="product-remove">
+									<a class="remove-item" data-id="{{item.id}}" >
+										<i class="far fa-window-close"></i>
+									</a>
+								</td>
+								<td class="product-image"><img src="{{ item.product.produc_image.url }}" alt=""></td>
+								<td class="product-name">
+									<a style="color: #874713;" href="{% url 'single_product' slug=item.product.slug %}">{{item.product.name}}</a>
+								</td>
+								<td>د.م {{ item.product.price|add:'0' }}</td>
+								<td class="product-quantity">
+									<input type="number" value="{{ item.quantity }}" class="quantity-input" data-id="{{ item.id }}">
+								</td>
+								<td class="product-total" id="product-total-{{ item.id }}">د.م {{ item.get_total|add:'0' }}</td>
+							</tr>
 							{% endfor %}
 						</tbody>
 					</table>
@@ -80,7 +86,7 @@
 						<tbody>
 							<tr class="total-data">
 								<td><strong>المجموع الفرعي: </strong></td>
-								<td>د.م {{ order.get_cart_total|add:'0'  }}</td>
+								<td id="total-price">د.م {{ order.get_cart_total|add:'0'  }}</td>
 							</tr>
 							<tr class="total-data">
 								<td><strong>شحن: </strong></td>
@@ -88,12 +94,11 @@
 							</tr>
 							<tr class="total-data">
                                 <td><h4><span class="orange-text" >المجموع :</span></td>
-								<td>د.م {{ order.get_cart_total|add:'0' }}</td>
+								<td id="total-prices">د.م {{ order.get_cart_total|add:'0' }}</td>
 							</tr>
 						</tbody>
 					</table>
 					<div class="cart-buttons">
-						<a href="cart.html" class="boxed-btn">Update Cart</a>
 						<a href="{% url 'checkout' %}" class="boxed-btn black">الدفع</a>
 					</div>
 				</div>
@@ -112,7 +117,88 @@
 	</div>
 </div>
 <!-- end cart -->
-
-
-<!-- content -->
 {% endblock %}
+
+{% block sign_scripts %}
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const quantityInputs = document.querySelectorAll('.quantity-input');
+		const removeButtons = document.querySelectorAll('.remove-item');
+
+		quantityInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                const orderItemId = input.getAttribute('data-id');
+                const newQuantity = input.value;
+
+                // Make an AJAX request
+                fetch(`/products/update_quantity/${orderItemId}/${newQuantity}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+
+							const productTotalElement = document.getElementById(`product-total-${orderItemId}`);
+							productTotalElement.textContent = `د.م ${Number(data.product_total)}`;
+
+							const totalPriceElement = document.getElementById('total-price');
+							totalPriceElement.textContent = `د.م ${Number(data.total_price)}`;
+
+							const totalPricesElement = document.getElementById('total-prices');
+							totalPricesElement.textContent = `د.م ${Number(data.total_price)}`;
+                        } else {
+                            console.error('Error updating quantity:', data.error);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+        });
+
+
+		function removeCartItem(orderItemId) {
+			// Make an AJAX request to remove the item
+			fetch(`/products/remove_item/${orderItemId}`)
+				.then(response => response.json())
+				.then(data => {
+					if (data.success) {
+						const rowToRemove = document.querySelector(`.table-body-row[data-id="${orderItemId}"]`);
+						rowToRemove.remove();
+	
+						const totalPriceElement = document.getElementById('total-price');
+						totalPriceElement.textContent = `د.م ${Number(data.total_price)}`;
+
+						const totalPricesElement = document.getElementById('total-prices');
+						totalPricesElement.textContent = `د.م ${Number(data.total_price)}`;
+						
+						const cartCountElement = document.querySelector('.cart-count');
+						cartCountElement.innerText = `${data.cartItems}`;
+
+
+					} else {
+						console.error('Error removing item:', data.error);
+					}
+				})
+				.catch(error => console.error('Error:', error));				
+				
+				
+		}
+
+		quantityInputs.forEach(input => {
+			input.addEventListener('change', function () {
+				const orderItemId = input.getAttribute('data-id');
+				const newQuantity = input.value;
+		
+				if (newQuantity <= 0) {
+					removeCartItem(orderItemId);
+				} 
+			});
+		});
+		
+		removeButtons.forEach(button => {
+			button.addEventListener('click', function() {
+				const orderItemId = button.getAttribute('data-id');
+				removeCartItem(orderItemId);
+			});
+		});
+	});
+	
+</script>
+{% endblock sign_scripts %}
