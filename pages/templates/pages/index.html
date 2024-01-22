@@ -102,7 +102,7 @@
                     <div class="col-lg-4 col-md-6 text-center {{product_info.product.categories}}">
                         <div class="single-product-item">
                             <div class="product-image">
-                                <a href="{% url 'single_product' slug=product_info.product.slug  %}"><img src="{{ product_info.product.produc_image.url }}" alt=""></a>
+                                <a href="{% url 'single_product' slug=product_info.product.slug  %}"><img src="{{ product_info.product.product_image.url }}" alt=""></a>
                             </div>
                             <h3>{{ product_info.product }}</h3>
                             <p class="product-price"><span>لكل لتر</span><span style="text-decoration: line-through;">{{ product_info.product.anchor_price|add:"0" }} د.م</span> {{ product_info.discounted_price|add:"0" }} د.م </p>
@@ -149,7 +149,7 @@
                                 </span>
                             </div>
                         </div>
-                        <img src="{{ offer.product.produc_image.url }}" alt="">
+                        <img src="{{ offer.product.product_image.url }}" alt="">
                     </div>
                 </div>
                 <!--Content Column-->
@@ -187,4 +187,7 @@
 <!-- content -->
 {% endblock %}
 
-{% block sign_scripts %}  {% endblock sign_scripts %}
+{% block side_scripts %}
+    <script src="{% static 'js/add_cart.js' %}"></script>
+{% endblock side_scripts %}
+

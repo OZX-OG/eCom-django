@@ -2,7 +2,17 @@ from django.shortcuts import render
 from products.models import *
 
 # # Create your views here.
-
+def search(request):
+    if request.method == 'GET':
+        # Retrieve the search query entered by the user
+        search_query = request.GET.get('q', '')
+        # Filter your model by the search query
+        products = Product.objects.filter(title__icontains=search_query)
+        if search_query == '': 
+            return {}
+        else:
+            return {'query':search_query, 'products':products}
+        
 def index(request):
     products = Product.objects.all()
     categories = Categories.objects.all()
@@ -39,6 +49,8 @@ def index(request):
     return render(request, 'pages/index.html', context)
 
 
-
 def return_policy(request):
     return render(request, 'pages/return-policy.html')
+
+def error_404(request, exception):
+    return render(request, 'pages/404.html')

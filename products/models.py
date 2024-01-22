@@ -7,10 +7,13 @@ class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=255, null=True)
     email = models.CharField(max_length=255, null=True)
-    
-    def __str__(self):
-        return str(self.user)
+    device = models.CharField(max_length=255, null=True, blank=True)
 
+    def __str__(self):
+        if self.name:
+            return str(self.user)
+        else:
+            return str(self.device)
 
 class Categories(models.Model):
     categories = models.CharField(max_length=25)
@@ -27,7 +30,7 @@ class Product(models.Model):
     price = models.FloatField()
     anchor_price = models.FloatField()
 
-    produc_image = models.ImageField(upload_to = "product", null=True)
+    product_image = models.ImageField(upload_to = "product", null=True)
 
     date = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)

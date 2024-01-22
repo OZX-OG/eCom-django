@@ -1,0 +1,101 @@
+
+{% extends 'dash_base.html' %}
+{% load static %}
+
+{% block title %}Order Details{% endblock %}
+
+{% block sign_css %} {% endblock sign_css %}
+        
+{% block content %}
+
+<div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+
+        <div class="col-12">
+            <div class="bg-secondary rounded h-100 p-4">
+                <h6 class="mb-4">All Product - USER / +212 682327095</h6>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Product Name</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Total price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>3esl-zohra-bio</td>
+                                <td>200</td>
+                                <td>6</td>
+                                <td>1200</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">2</th>
+                                <td>3esl-zohra-bio</td>
+                                <td>200</td>
+                                <td>2</td>
+                                <td>1200</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">3</th>
+                                <td>3esl-zohra-bio</td>
+                                <td>200</td>
+                                <td>10</td>
+                                <td>1200</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="col-12">
+            <div class="bg-secondary rounded h-100 p-4">
+                <h6 class="mb-4">Total: </h6>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">All the oder</th>
+                                <th scope="col">All The Quantity</th>
+                                <th scope="col">Total Price</th>
+                                <th scope="col">Stuts</th>
+                                <th scope="col">Save</th>
+                                <th scope="col">Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">3</th>
+                                <td>18</td>
+                                <td>3600</td>
+                                <td>
+                                    <select class="form-select form-select-sm mb-3"
+                                        aria-label=".form-select-sm example">
+                                        <option selected>Open this select menu</option>
+                                        <option value="1">Pending</option>
+                                        <option value="2">Closed</option>
+                                        <option value="3">Has been Processed</option>
+                                    </select>
+                                </td>
+                                <td><a class="btn btn-sm btn-success" href="{% url 'order_details' %}">Save</a></td>
+                                <td><a class="btn btn-sm btn-danger" href="">Delete</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<!-- Content End -->
+{% endblock content %}
+
+{% block side_scripts %}
+{% endblock side_scripts %}

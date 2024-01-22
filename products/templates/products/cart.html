@@ -21,7 +21,7 @@
 	</div>
 </div>
 <!-- end breadcrumb section -->
-
+{{ cart }}
 <!-- cart -->
 <div class="cart-section mt-150 mb-150">
 	<div class="container">
@@ -40,7 +40,7 @@
 							</tr>
 						</thead>
 					<tbody>
-							
+
 							{% for item in items %}
 							<tr class="table-body-row" data-id="{{item.id}}">
 								<td class="product-remove">
@@ -48,7 +48,7 @@
 										<i class="far fa-window-close"></i>
 									</a>
 								</td>
-								<td class="product-image"><img src="{{ item.product.produc_image.url }}" alt=""></td>
+								<td class="product-image"><img src="{{ item.product.product_image.url }}" alt=""></td>
 								<td class="product-name">
 									<a style="color: #874713;" href="{% url 'single_product' slug=item.product.slug %}">{{item.product.name}}</a>
 								</td>
@@ -118,8 +118,7 @@
 </div>
 <!-- end cart -->
 {% endblock %}
-
-{% block sign_scripts %}
+{% block side_scripts %}
 <script>
 	document.addEventListener('DOMContentLoaded', function() {
 		const quantityInputs = document.querySelectorAll('.quantity-input');
@@ -201,4 +200,4 @@
 	});
 	
 </script>
-{% endblock sign_scripts %}
+{% endblock side_scripts %}

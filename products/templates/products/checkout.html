@@ -40,18 +40,27 @@
                             <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
                                 <div class="card-body">
                                     <div class="billing-address-form">
-                                        <form action="{% url 'checkout' %}" method="POST">
+                                        <form id="myForm" action="{% url 'checkout' %}" method="POST">
                                             {% csrf_token %}
-                                            <p><input type="text"  name="name"  placeholder="اسم" ></p>
-                                            <p><input type="email" name="email"  placeholder="بريد إلكتروني"></p>
-                                            <p><input type="text"  name="city"  placeholder="المدينة"></p>
-                                            <p><input type="tel"   name="phone"  placeholder="هاتف"></p>
+                                            <p> {{ form.name }} </p>
+                                            <p> {{ form.email }} </p>
+                                            <p> {{ form.city }} </p>
+                                            <p> {{ form.phone_number }} </p>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
-                            <div class="alert alert-primary" role="alert">
-                                This is a primary alert—check it out!
-                            </div>
+                    
+                            {% for message in messages %}
+              
+                    
+                                {% if message.tags == 'warning' %}
+                                    <div class="d-flex justify-content-center alert alert-danger" role="alert">{{message}}</div>
+                                {% elif message.tags == 'success' %}
+                                    <div class="d-flex justify-content-center alert alert-success" role="alert">{{message}}</div>
+                                {% endif %}
+                
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
@@ -101,8 +110,7 @@
                         </tbody>
                     </table>
                    
-                    <button type="submit" style="background-color: transparent; border-color: transparent;"> <a class="boxed-btn">Place Order</a></button>
-                    </form>
+                    <a class="boxed-btn" onclick="document.getElementById('myForm').submit();">Place Order</a>
                 </div>
             </div>
         </div>

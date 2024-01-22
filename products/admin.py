@@ -6,7 +6,7 @@ admin.site.site_header = "OZX-OG"
 
 
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ['user', 'name', 'email']
+    list_display = ['user', 'device','name', 'email']
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = ['name', 'categories', 'price', 'anchor_price','date','is_active']

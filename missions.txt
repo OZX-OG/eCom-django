@@ -35,4 +35,6 @@ category:
 name: manytomany field
 
 ---
-3orod
+dashboard:
+model.py:
+	

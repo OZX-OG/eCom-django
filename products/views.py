@@ -1,7 +1,18 @@
 from django.shortcuts import render, redirect
-from .models import *
 from django.http import JsonResponse
+from django.contrib import messages
+from .forms import ShippingAddressForm
+from .models import *
 import json
+
+def get_customer(request):
+    try:
+        customer = request.user.customer
+    except:
+        device = request.COOKIES['device']
+        customer, created = Customer.objects.get_or_create(device=device)
+    
+    return customer
 
 def shop(request):
     context = {
@@ -12,20 +23,20 @@ def shop(request):
 
 def single_product(request, slug):
     if request.method == "POST":
-        if request.user.is_authenticated:
-            new_quantity = int(request.POST.get("quantity"))
 
-            if new_quantity > 0:
-
-                customer = request.user.customer
-                product = Product.objects.get(slug=slug)
-                order, created = Order.objects.get_or_create(customer=customer, complete=False)
-                orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
-                orderItem.quantity = (orderItem.quantity + new_quantity)
-                orderItem.save()
+        if request.POST.get("quantity") == "":
+            new_quantity = 1
         else:
-            pass
+            new_quantity = int(float(request.POST.get("quantity")))
 
+        if new_quantity > 0:
+            customer = get_customer(request)
+
+            product = Product.objects.get(slug=slug)
+            order, created = Order.objects.get_or_create(customer=customer, complete=False)
+            orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
+            orderItem.quantity = (orderItem.quantity + new_quantity)
+            orderItem.save()
 
     context = {
             "products": Product.objects.all(),
@@ -36,14 +47,10 @@ def single_product(request, slug):
     return render(request, 'products/single-Product.html', context)
 
 def cart(request):
+    customer = get_customer(request)
 
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, complete=False)
-        items = order.orderitem_set.all()
-    else:
-        items = []
-        order = {}
+    order, created = Order.objects.get_or_create(customer=customer, complete=False)
+    items = order.orderitem_set.all()
 
     context = {
         "items":items,
@@ -52,59 +59,38 @@ def cart(request):
     return render(request, 'products/cart.html', context)
 
 def checkout(request):
-    print("ana hna")
     if request.method == 'POST':
-        username = request.POST.get("name")
-        email = request.POST.get("email")
-        city = request.POST.get("city")
-        phone = request.POST.get("phone")
+        form = ShippingAddressForm(request.POST)
+        if form.is_valid():
+            customer = get_customer(request)
+            order, created = Order.objects.get_or_create(customer=customer, complete=False)
+            
+            items = order.orderitem_set.all()
+            order.complete = True
+            order.save()
 
-        print(username)
-        print(city)
-        print(city)
-        print(phone)
+            shipping_address = form.save(commit=False)
+            shipping_address.customer = customer
+            shipping_address.order = order
+            shipping_address.save()
 
-        customer = request.user.customer
-        print(customer)
-        print(request.user)
-        order, created = Order.objects.get_or_create(customer=customer, complete=False)
-        print(order)
-        
-        items = order.orderitem_set.all()
-        print(items)
+            messages.success(request, 'تم تقديم الطلبك بنجاح!')
+        else:
+            print("not valid")
+            print(form.errors)
+            messages.warning(request, 'Error in the form submission. Please check the errors above.')
 
-        order.complete = True
-        order.save()
-
-        # ShippingAddress.objects.create(
-        #     customer = customer,
-        #     order = order,
-        #     name = "ozx",
-        #     email = "fanpzx@gmail.com",
-        #     city = "rabat",
-        #     phone_number = "sala,"
-        # )
-        ShippingAddress.objects.create(
-            customer = customer,
-            order = order,
-            name = username,
-            email = email,
-            city = city,
-            phone_number = phone
-        )
-        return redirect('index')
-
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, complete=False)
-        items = order.orderitem_set.all()
     else:
-        items = []
-        order = {}
+        form = ShippingAddressForm()
+
+    customer = get_customer(request)
+    order, created = Order.objects.get_or_create(customer=customer, complete=False)
+    items = order.orderitem_set.all()
 
     context = {
-        "items":items,
-        "order":order,
+        'form': form,
+        'items': items,
+        'order': order,
     }
 
     return render(request, 'products/checkout.html', context)
@@ -112,25 +98,19 @@ def checkout(request):
 
 
 
-
-def updateItem(request):
+def update_item(request):
     data = json.loads(request.body)
     print(data)
     productSlug = data['productSlug']
-    action = data['action']
-    print('Action:', action)
     print('Product:', productSlug)
 
-    customer = request.user.customer
+    customer = get_customer(request)
+
     product = Product.objects.get(slug=productSlug)
     order, created = Order.objects.get_or_create(customer=customer, complete=False)
-
     orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
-
-    if action == 'add':
-        orderItem.quantity = (orderItem.quantity + 1)
-    elif action == 'remove':
-        orderItem.quantity = (orderItem.quantity - 1)
+    
+    orderItem.quantity = (orderItem.quantity + 1)
 
     orderItem.save()
 
@@ -157,16 +137,14 @@ def update_quantity(request, order_item_id, new_quantity):
         # Recalculate updated product price, product total, and total price
         product_total = order_item.get_total
         total_price = order_item.order.get_cart_total
-        print({
+        response =  {
             'success': True,
             'product_total': int(product_total),
             'total_price': int(total_price),
-        })
-        return JsonResponse({
-            'success': True,
-            'product_total': int(product_total),
-            'total_price': int(total_price),
-        })
+        }
+
+        print(response)
+        return JsonResponse(response)
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
 
