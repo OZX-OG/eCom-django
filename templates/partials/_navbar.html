@@ -36,6 +36,9 @@
                                 class="current-list-item"
                             {% endif %} 
                             ><a id="shop" href="{% url 'shop' %}">متجر</a></li>
+                            {% if request.user.is_authenticated and request.user.is_staff %}
+                                <li><a id="shop" href="{% url 'dash_index' %}">Dashboard</a></li>
+                            {% endif %}
 
                             <li >
                                 <div class="header-icons">

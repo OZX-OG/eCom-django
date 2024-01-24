@@ -4,7 +4,9 @@
 
 {% block title %}All orders{% endblock %}
 
-{% block sign_css %} {% endblock sign_css %}
+{% block sign_css %}
+<link href="{% static 'dash_css/table.css' %}" rel="stylesheet">
+{% endblock sign_css %}
         
 {% block content %}
 
@@ -14,10 +16,10 @@
             <h6 class="mb-0">All Orders</h6>
         </div>
         <div class="table-responsive">
-            <table class="table text-start align-middle table-bordered table-hover mb-0">
+            <table id="orderTable" class="table text-start align-middle table-bordered table-hover mb-0">
                 <thead>
                     <tr class="text-white">
-                        <th scope="col"><input class="form-check-input" type="checkbox"></th>
+                        <th scope="col">#</th>
                         <th scope="col">Customer</th>
                         <th scope="col">Date</th>
                         <th scope="col">Phone Number</th>
@@ -29,114 +31,25 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td><input class="form-check-input" type="checkbox"></td>
-                        <td>khalid choja3e</td>
-                        <td>01 Jan 2045</td>
-                        <td>+212 682327095</td>
-                        <td>gides18800@ikuromi.com</td>
-                        <td>$123</td>
-                        <td>5</td>
-                        <td class="p-2 mb-2 text-warning">Pending</td>
-                        <td><a class="btn btn-sm btn-primary" href="{%  url 'order_details' %}">Detail</a></td>
-                    </tr>
-                    <tr>
-                        <td><input class="form-check-input" type="checkbox"></td>
-                        <td>khalid choja3e</td>
-                        <td>01 Jan 2045</td>
-                        <td>+212 682327095</td>
-                        <td>gides18800@ikuromi.com</td>
-                        <td>$123</td>
-                        <td>5</td>
-                        <td class="p-2 mb-2 text-danger">Closed</td>
-                        <td><a class="btn btn-sm btn-primary" href="{%  url 'order_details' %}">Detail</a></td>
-                    </tr>
-                    <tr>
-                        <td><input class="form-check-input" type="checkbox"></td>
-                        <td>khalid choja3e</td>
-                        <td>01 Jan 2045</td>
-                        <td>+212 682327095</td>
-                        <td>gides18800@ikuromi.com</td>
-                        <td>$123</td>
-                        <td>5</td>
-                        <td class="p-2 mb-2 text-success">Has been Processed</td>
-                        <td><a class="btn btn-sm btn-primary" href="{%  url 'order_details' %}">Detail</a></td>
-                    </tr>
-                    <tr>
-                        <td><input class="form-check-input" type="checkbox"></td>
-                        <td>khalid choja3e</td>
-                        <td>01 Jan 2045</td>
-                        <td>+212 682327095</td>
-                        <td>gides18800@ikuromi.com</td>
-                        <td>$123</td>
-                        <td>5</td>
-                        <td class="p-2 mb-2 text-warning">Pending</td>
-                        <td><a class="btn btn-sm btn-primary" href="{%  url 'order_details' %}">Detail</a></td>
-                    </tr>
-                    <tr>
-                        <td><input class="form-check-input" type="checkbox"></td>
-                        <td>khalid choja3e</td>
-                        <td>01 Jan 2045</td>
-                        <td>+212 682327095</td>
-                        <td>gides18800@ikuromi.com</td>
-                        <td>$123</td>
-                        <td>5</td>
-                        <td class="p-2 mb-2 text-danger">Closed</td>
-                        <td><a class="btn btn-sm btn-primary" href="{%  url 'order_details' %}">Detail</a></td>
-                    </tr>
-                    <tr>
-                        <td><input class="form-check-input" type="checkbox"></td>
-                        <td>khalid choja3e</td>
-                        <td>01 Jan 2045</td>
-                        <td>+212 682327095</td>
-                        <td>gides18800@ikuromi.com</td>
-                        <td>$123</td>
-                        <td>5</td>
-                        <td class="p-2 mb-2 text-success">Has been Processed</td>
-                        <td><a class="btn btn-sm btn-primary" href="{%  url 'order_details' %}">Detail</a></td>
-                    </tr>
-                    <tr>
-                        <td><input class="form-check-input" type="checkbox"></td>
-                        <td>khalid choja3e</td>
-                        <td>01 Jan 2045</td>
-                        <td>+212 682327095</td>
-                        <td>gides18800@ikuromi.com</td>
-                        <td>$123</td>
-                        <td>5</td>
-                        <td class="p-2 mb-2 text-warning">Pending</td>
-                        <td><a class="btn btn-sm btn-primary" href="{%  url 'order_details' %}">Detail</a></td>
-                    </tr>
-                    <tr>
-                        <td><input class="form-check-input" type="checkbox"></td>
-                        <td>khalid choja3e</td>
-                        <td>01 Jan 2045</td>
-                        <td>+212 682327095</td>
-                        <td>gides18800@ikuromi.com</td>
-                        <td>$123</td>
-                        <td>5</td>
-                        <td class="p-2 mb-2 text-danger">Closed</td>
-                        <td><a class="btn btn-sm btn-primary" href="{%  url 'order_details' %}">Detail</a></td>
-                    </tr>
-                    <tr>
-                        <td><input class="form-check-input" type="checkbox"></td>
-                        <td>khalid choja3e</td>
-                        <td>01 Jan 2045</td>
-                        <td>+212 682327095</td>
-                        <td>gides18800@ikuromi.com</td>
-                        <td>$123</td>
-                        <td>5</td>
-                        <td class="p-2 mb-2 text-success">Has been Processed</td>
-                        <td><a class="btn btn-sm btn-primary" href="{%  url 'order_details' %}">Detail</a></td>
-                    </tr>
-                    <!-- <tr>
-                        <td><input class="form-check-input" type="checkbox"></td>
-                        <td>01 Jan 2045</td>
-                        <td>INV-0123</td>
-                        <td>Jhon Doe</td>
-                        <td>$123</td>
-                        <td>Paid</td>
-                        <td><a class="btn btn-sm btn-primary" href="">Detail</a></td>
-                    </tr> -->
+                    {% for order, products_count, amount, ord in order_infos %}
+                        <tr>
+                            <td scope="row">{{ forloop.counter }}</td>
+                            <td>{{ order.name }}</td>
+                            <td>{{ order.date }}</td>
+                            <td>{{ order.phone_number }}</td>
+                            <td>{{ order.email }}</td>
+                            <td> د.م {{ amount|add:'0' }}</td>
+                            <td>{{ products_count }}</td>
+                            {% if order.status == 'Pending' %}
+                                <td class="p-2 mb-2 text-primary">{{ order.status }}</td>
+                            {% elif order.status == 'Processed' %}
+                                <td class="p-2 mb-2 text-success">{{ order.status }}</td>
+                            {% else %}
+                                <td class="p-2 mb-2 text-danger">{{ order.status }}</td>
+                            {% endif %}
+                            <td><a class="btn btn-sm btn-primary" href="{%  url 'order_details' ord.id %}">Detail</a></td>
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -147,4 +60,12 @@
 {% endblock content %}
 
 {% block side_scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#orderTable').DataTable({
+        });
+    });
+</script>
 {% endblock side_scripts %}

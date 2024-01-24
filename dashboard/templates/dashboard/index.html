@@ -4,9 +4,12 @@
 
 {% block title %}Home{% endblock %}
 
-{% block sign_css %} {% endblock sign_css %}
+{% block sign_css %}
+<link href="{% static 'dash_css/table.css' %}" rel="stylesheet">
+{% endblock sign_css %}
         
 {% block content %}
+
 
 <!-- Content Start -->
 <div class="container-fluid pt-4 px-4">
@@ -16,7 +19,7 @@
                 <i class="fa fa-chart-line fa-3x text-primary"></i>
                 <div class="ms-3">
                     <p class="mb-2">Today Sale</p>
-                    <h6 class="mb-0">$50</h6>
+                    <h6 class="mb-0"> د.م {{ today_sale }}</h6>
                 </div>
             </div>
         </div>
@@ -25,7 +28,7 @@
                 <i class="fa fa-chart-bar fa-3x text-primary"></i>
                 <div class="ms-3">
                     <p class="mb-2">Total Sale</p>
-                    <h6 class="mb-0">$1234</h6>
+                    <h6 class="mb-0"> د.م {{ total_sale }}</h6>
                 </div>
             </div>
         </div>
@@ -34,7 +37,7 @@
                 <i class="fa fa-chart-area fa-3x text-primary"></i>
                 <div class="ms-3">
                     <p class="mb-2">Today Order</p>
-                    <h6 class="mb-0">5</h6>
+                    <h6 class="mb-0">{{ today_order_count }}</h6>
                 </div>
             </div>
         </div>
@@ -43,7 +46,7 @@
                 <i class="fa fa-chart-pie fa-3x text-primary"></i>
                 <div class="ms-3">
                     <p class="mb-2">Total Order</p>
-                    <h6 class="mb-0">90</h6>
+                    <h6 class="mb-0">{{ total_order_count }}</h6>
                 </div>
             </div>
         </div>
@@ -86,10 +89,10 @@
             <a href="{% url 'all_order' %}">Show All</a>
         </div>
         <div class="table-responsive">
-            <table class="table text-start align-middle table-bordered table-hover mb-0">
+            <table id="orderTable" class="table text-start align-middle table-bordered table-hover mb-0">
                 <thead>
                     <tr class="text-white">
-                        <th scope="col"><input class="form-check-input" type="checkbox"></th>
+                        <th scope="row">#</th>
                         <th scope="col">Customer</th>
                         <th scope="col">Date</th>
                         <th scope="col">Phone Number</th>
@@ -101,7 +104,29 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                    {% for order, products_count, amount, ord in order_infos %}
+                        {% if forloop.counter <= 3 %}
+                            <tr>
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td>{{ order.name }}</td>
+                                <td>{{ order.date }}</td>
+                                <td>{{ order.phone_number }}</td>
+                                <td>{{ order.email }}</td>
+                                <td>{{ amount|add:'0' }}  د.م </td>
+                                <td>{{ products_count }}</td>
+                                {% if order.status == 'Pending' %}
+                                    <td class="p-2 mb-2 text-primary">{{ order.status }}</td>
+                                {% elif order.status == 'Processed' %}
+                                    <td class="p-2 mb-2 text-success">{{ order.status }}</td>
+                                {% else %}
+                                    <td class="p-2 mb-2 text-danger">{{ order.status }}</td>
+                                {% endif %}
+                                <td><a class="btn btn-sm btn-primary" href="{%  url 'order_details' ord.id %}">Detail</a></td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    <!-- <tr>
                         <td><input class="form-check-input" type="checkbox"></td>
                         <td>khalid choja3e</td>
                         <td>01 Jan 2045</td>
@@ -110,38 +135,7 @@
                         <td>$123</td>
                         <td>5</td>
                         <td class="p-2 mb-2 text-primary">Pending</td>
-                        <td><a class="btn btn-sm btn-primary" href="{%  url 'order_details' %}">Detail</a></td>
-                    </tr>
-                    <tr>
-                        <td><input class="form-check-input" type="checkbox"></td>
-                        <td>khalid choja3e</td>
-                        <td>01 Jan 2045</td>
-                        <td>+212 682327095</td>
-                        <td>gides18800@ikuromi.com</td>
-                        <td>$123</td>
-                        <td>5</td>
-                        <td class="p-2 mb-2 text-danger">Closed</td>
-                        <td><a class="btn btn-sm btn-primary" href="{%  url 'order_details' %}">Detail</a></td>
-                    </tr>
-                    <tr>
-                        <td><input class="form-check-input" type="checkbox"></td>
-                        <td>khalid choja3e</td>
-                        <td>01 Jan 2045</td>
-                        <td>+212 682327095</td>
-                        <td>gides18800@ikuromi.com</td>
-                        <td>$123</td>
-                        <td>5</td>
-                        <td class="p-2 mb-2 text-success">Has been Processed</td>
-                        <td><a class="btn btn-sm btn-primary" href="{%  url 'order_details' %}">Detail</a></td>
-                    </tr>
-                    <!-- <tr>
-                        <td><input class="form-check-input" type="checkbox"></td>
-                        <td>01 Jan 2045</td>
-                        <td>INV-0123</td>
-                        <td>Jhon Doe</td>
-                        <td>$123</td>
-                        <td>Paid</td>
-                        <td><a class="btn btn-sm btn-primary" href="">Detail</a></td>
+                        <td><a class="btn btn-sm btn-primary" href="{%  url 'order_details' 0 %}">Detail</a></td>
                     </tr> -->
                 </tbody>
             </table>
@@ -161,7 +155,7 @@
                     <a href="">Show All</a>
                 </div>
                 <div class="d-flex align-items-center border-bottom py-3">
-                    <img class="rounded-circle flex-shrink-0" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                    <img class="rounded-circle flex-shrink-0" src="" alt="" style="width: 40px; height: 40px;">
                     <div class="w-100 ms-3">
                         <div class="d-flex w-100 justify-content-between">
                             <h6 class="mb-0">Jhon Doe</h6>
@@ -171,7 +165,7 @@
                     </div>
                 </div>
                 <div class="d-flex align-items-center border-bottom py-3">
-                    <img class="rounded-circle flex-shrink-0" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                    <img class="rounded-circle flex-shrink-0" src="" alt="" style="width: 40px; height: 40px;">
                     <div class="w-100 ms-3">
                         <div class="d-flex w-100 justify-content-between">
                             <h6 class="mb-0">Jhon Doe</h6>
@@ -181,7 +175,7 @@
                     </div>
                 </div>
                 <div class="d-flex align-items-center border-bottom py-3">
-                    <img class="rounded-circle flex-shrink-0" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                    <img class="rounded-circle flex-shrink-0" src="" alt="" style="width: 40px; height: 40px;">
                     <div class="w-100 ms-3">
                         <div class="d-flex w-100 justify-content-between">
                             <h6 class="mb-0">Jhon Doe</h6>
@@ -191,7 +185,7 @@
                     </div>
                 </div>
                 <div class="d-flex align-items-center pt-3">
-                    <img class="rounded-circle flex-shrink-0" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                    <img class="rounded-circle flex-shrink-0" src="" alt="" style="width: 40px; height: 40px;">
                     <div class="w-100 ms-3">
                         <div class="d-flex w-100 justify-content-between">
                             <h6 class="mb-0">Jhon Doe</h6>
@@ -209,53 +203,32 @@
                     <a href="{% url 'dash_todolist' %}">Show All</a>
                 </div>
                 <div class="d-flex mb-2">
-                    <input class="form-control bg-dark border-0" type="text" placeholder="Enter task">
-                    <button type="button" class="btn btn-primary ms-2">Add</button>
-                </div>
-                <div class="d-flex align-items-center border-bottom py-2">
-                    <input class="form-check-input m-0" type="checkbox">
-                    <div class="w-100 ms-3">
-                        <div class="d-flex w-100 align-items-center justify-content-between">
-                            <span>Short task goes here...</span>
-                            <button class="btn btn-sm"><i class="fa fa-times"></i></button>
-                        </div>
-                    </div>
-                </div>
-                <div class="d-flex align-items-center border-bottom py-2">
-                    <input class="form-check-input m-0" type="checkbox">
-                    <div class="w-100 ms-3">
-                        <div class="d-flex w-100 align-items-center justify-content-between">
-                            <span>Short task goes here...</span>
-                            <button class="btn btn-sm"><i class="fa fa-times"></i></button>
-                        </div>
-                    </div>
-                </div>
-                <div class="d-flex align-items-center border-bottom py-2">
-                    <input class="form-check-input m-0" type="checkbox" checked>
-                    <div class="w-100 ms-3">
-                        <div class="d-flex w-100 align-items-center justify-content-between">
-                            <span><del>Short task goes here...</del></span>
-                            <button class="btn btn-sm text-primary"><i class="fa fa-times"></i></button>
-                        </div>
-                    </div>
-                </div>
-                <div class="d-flex align-items-center border-bottom py-2">
-                    <input class="form-check-input m-0" type="checkbox">
-                    <div class="w-100 ms-3">
-                        <div class="d-flex w-100 align-items-center justify-content-between">
-                            <span>Short task goes here...</span>
-                            <button class="btn btn-sm"><i class="fa fa-times"></i></button>
-                        </div>
-                    </div>
-                </div>
-                <div class="d-flex align-items-center pt-2">
-                    <input class="form-check-input m-0" type="checkbox">
-                    <div class="w-100 ms-3">
-                        <div class="d-flex w-100 align-items-center justify-content-between">
-                            <span>Short task goes here...</span>
-                            <button class="btn btn-sm"><i class="fa fa-times"></i></button>
-                        </div>
-                    </div>
+                    <input id="newTaskInput" class="form-control bg-dark border-0" type="text" placeholder="Enter task">
+                    <button id="addTaskBtn" type="button" class="btn btn-primary ms-2">Add</button>
+                  </div>
+                  
+                <div id="tasklist">
+                    {% for task in tasks %}
+                        {% if forloop.counter <= 5 %}
+                            <div data-id="{{ task.id }}" class="d-flex align-items-center border-bottom py-2 task-item">
+                                {% if task.completed %}
+                                    <input class="form-check-input m-0 task-checkbox" type="checkbox" checked>
+                                {% else %}
+                                    <input class="form-check-input m-0 task-checkbox" type="checkbox">
+                                {% endif %}
+                                <div class="w-100 ms-3">
+                                    <div class="d-flex w-100 align-items-center justify-content-between">
+                                        {% if task.completed %}
+                                            <span><del>{{ task.title }}</del></span>
+                                        {% else %}
+                                            <span>{{ task.title }}</span>
+                                        {% endif %}
+                                        <button class="btn btn-sm text-primary task-delete-btn"><i class="fa fa-times"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -265,11 +238,132 @@
 {% endblock content %}
 
 {% block side_scripts %}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#orderTable').DataTable({
+            "paging": false,
+            "ordering": true,
+            "info": false,
+            "searching": false
+        });
+    });
+</script>
 <script src="{% static 'dash_lib/chart/chart.min.js' %}"></script>
 <script src="{% static 'dash_lib/waypoints/waypoints.min.js' %}"></script>
 <script src="{% static 'dash_lib/owlcarousel/owl.carousel.min.js' %}"></script>
 <script src="{% static 'dash_lib/tempusdominus/js/moment.min.js' %}"></script>
 <script src="{% static 'dash_lib/tempusdominus/js/moment-timezone.min.js' %}"></script>
 <script src="{% static 'dash_lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js' %}"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Function to get CSRF token from cookies
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+            // Function to generate task HTML
+            function generateTaskHtml(taskId, taskTitle) {
+                return `<div data-id="${taskId}" class="d-flex align-items-center border-bottom py-2 task-item">
+                            <input class="form-check-input m-0 task-checkbox" type="checkbox">
+                            <div class="w-100 ms-3">
+                                <div class="d-flex w-100 align-items-center justify-content-between">
+                                    <span>${taskTitle}</span>
+                                    <button class="btn btn-sm task-delete-btn"><i class="fa fa-times"></i></button>
+                                </div>
+                            </div>
+                        </div>`;
+            }
+
+        // Add Task
+        document.getElementById("addTaskBtn").addEventListener("click", function () {
+            var newTaskInput = document.getElementById("newTaskInput");
+            var title = newTaskInput.value.trim();
+
+            if (title !== "") {
+                // Send AJAX request to add task
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "{% url 'add_task' %}", true);
+                xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function () {
+                    var responseData = JSON.parse(xhr.responseText);
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        console.log(responseData.message);
+                        
+                        var taskContainer = document.getElementById("tasklist"); // Replace with your actual container ID
+                        taskContainer.insertAdjacentHTML('afterend', generateTaskHtml(responseData.task_id, title));
+                        newTaskInput.value = "";
+                    }
+                };
+                xhr.send("title=" + encodeURIComponent(title));
+            } else {
+                // Handle empty title case
+                console.log("Title cannot be empty.");
+            }
+        });
+
+        // Mark Task as Completed
+        document.querySelectorAll(".task-checkbox").forEach(function (checkbox) {
+            checkbox.addEventListener("change", function () {
+                var taskItem = checkbox.closest('.task-item');
+                var taskId = this.closest(".task-item").getAttribute("data-id");
+                // Send AJAX request to mark task as completed
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "{% url 'mark_task_completed' task_id=0 %}".replace("0", taskId), true);
+                xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        var responseData = JSON.parse(xhr.responseText);
+                        if (responseData.complete){
+                            taskItem.querySelector('span').innerHTML = `<del>${taskItem.querySelector('span').innerText}</del>`;
+                        } else {
+                            const delElement = taskItem.querySelector('span del');
+                            delElement.parentNode.insertBefore(delElement.firstChild, delElement);
+                            delElement.remove();
+                        }
+                    }
+                };
+                xhr.send();
+            });
+        });
+
+        // Delete Task
+        document.querySelectorAll(".task-delete-btn").forEach(function(deleteBtn) {
+            deleteBtn.addEventListener("click", function() {
+                var taskItem = this.closest(".task-item");
+                var taskId = taskItem.getAttribute("data-id");
+
+                // Send AJAX request to delete task
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "{% url 'delete_task' task_id=0 %}".replace("0", taskId), true);
+                xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        // Remove the task element once the request is completed
+                        taskItem.remove();
+                        var responseData = JSON.parse(xhr.responseText);
+                        console.log(responseData.message);
+                    }
+                };
+                xhr.send();
+            });
+        });
+
+    });
+</script>
 {% endblock side_scripts %}

@@ -4,7 +4,9 @@
 
 {% block title %}Order Details{% endblock %}
 
-{% block sign_css %} {% endblock sign_css %}
+{% block sign_css %}
+<link href="{% static 'dash_css/table.css' %}" rel="stylesheet">
+{% endblock sign_css %}
         
 {% block content %}
 
@@ -13,10 +15,18 @@
 
         <div class="col-12">
             <div class="bg-secondary rounded h-100 p-4">
-                <h6 class="mb-4">All Product - USER / +212 682327095</h6>
+                <h6 class="mb-4">All Product - {{ client_info }} / {{ client_info.phone_number }} / 
+                    {% if client_info.status == 'Pending' %}
+                        <span class="text-primary">{{ client_info.status }}</span>
+                    {% elif client_info.status == 'Processed' %}
+                        <span class="text-success">{{ client_info.status }}</span>
+                    {% else %}
+                        <span class="text-danger">{{ client_info.status }}</span>
+                    {% endif %}
+                </h6>
                 <div class="table-responsive">
-                    <table class="table">
-                        <thead>
+                    <table id="orderTable"  class="table stripe">
+                        <thead >
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">Product Name</th>
@@ -25,14 +35,17 @@
                                 <th scope="col">Total price</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <th scope="row">1</th>
-                                <td>3esl-zohra-bio</td>
-                                <td>200</td>
-                                <td>6</td>
-                                <td>1200</td>
-                            </tr>
+                        <tbody style="background-color: #191C24;">
+                            {% for order in orderitems %}
+                                <tr>
+                                    <th scope="row">{{ forloop.counter }}</th>
+                                    <td><a style="color: #f28123;" href="{% url 'single_product' order.product.slug %}">{{ order }}</a></td>
+                                    <td> د.م {{ order.product.price }}</td>
+                                    <td>{{ order.quantity }}</td>
+                                    <td> د.م {{ order.get_total }}</td>
+                                </tr>
+                            {% endfor %}
+<!-- 
                             <tr>
                                 <th scope="row">2</th>
                                 <td>3esl-zohra-bio</td>
@@ -46,7 +59,7 @@
                                 <td>200</td>
                                 <td>10</td>
                                 <td>1200</td>
-                            </tr>
+                            </tr> -->
                         </tbody>
                     </table>
                 </div>
@@ -70,20 +83,22 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <th scope="row">3</th>
-                                <td>18</td>
-                                <td>3600</td>
+                                <th scope="row">{{ total.all_items }}</th>
+                                <td>{{ total.quantity }}</td>
+                                <td> د.م {{ total.total_price }}</td>
                                 <td>
-                                    <select class="form-select form-select-sm mb-3"
-                                        aria-label=".form-select-sm example">
-                                        <option selected>Open this select menu</option>
-                                        <option value="1">Pending</option>
-                                        <option value="2">Closed</option>
-                                        <option value="3">Has been Processed</option>
-                                    </select>
+                                    <form method="post" id="myForm">
+                                        {% csrf_token %}
+                                        <label for="id_status" class="visually-hidden">Status</label>
+                                        <select name="status" class="form-select form-select-sm mb-3" aria-label=".form-select-sm example">
+                                            {% for value, label in form.fields.status.choices %}
+                                                <option value="{{ value }}" {% if value == client_info.status %}selected{% endif %}>{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </form>
                                 </td>
-                                <td><a class="btn btn-sm btn-success" href="{% url 'order_details' %}">Save</a></td>
-                                <td><a class="btn btn-sm btn-danger" href="">Delete</a></td>
+                                <td><a class="btn btn-sm btn-success" onclick="document.getElementById('myForm').submit();">Save</a></td>
+                                <td><a class="btn btn-sm btn-danger" onclick="confirmDelete('{{ order.id }}')">Delete</a></td>
                             </tr>
                         </tbody>
                     </table>
@@ -98,4 +113,24 @@
 {% endblock content %}
 
 {% block side_scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#orderTable').DataTable({
+        });
+    });
+</script>
+
+<script>
+    function confirmDelete(orderId) {
+        var confirmMessage = "Are you sure you want to delete this order?" ;
+        var isConfirmed = confirm(confirmMessage);
+
+        if (isConfirmed) {
+            window.location.href = "/delete_order/" + orderId; 
+        }
+    }
+</script>
 {% endblock side_scripts %}
+

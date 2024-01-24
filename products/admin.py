@@ -19,7 +19,8 @@ class OrderItemAdmin(admin.ModelAdmin):
     list_display = ['product', 'order','quantity',  "date_added"]
 
 class ShippingAddressAdmin(admin.ModelAdmin):
-    list_display = ['customer', 'order','name', 'email', 'city', 'phone_number']
+    list_display = ['customer', 'order','name', 'email', 'city', 'phone_number', 'status', 'date']
+    list_editable = ['status']
 
 class OfferAdmin(admin.ModelAdmin):
     list_display = ['id', 'product', 'percentage', 'finish_date']

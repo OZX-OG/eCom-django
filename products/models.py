@@ -68,7 +68,6 @@ class OrderItem(models.Model):
     def __str__(self):
         return str(self.product)
     
-
     @property
     def get_total(self):
         return self.product.price * self.quantity
@@ -81,13 +80,20 @@ class ShippingAddress(models.Model):
     email = models.EmailField(max_length=255, null=True, blank=True)
     city = models.CharField(max_length=255, null=True)
     phone_number = PhoneNumberField()
+    date = models.DateTimeField(auto_now_add=True, null=True)
+    STATUS_CHOICES = (
+        ("Pending", "Pending"),
+        ("Processed", "Processed"),
+        ("Closed", "Closed"),
+    )
+    status = models.CharField(max_length=9, choices=STATUS_CHOICES, default="Pending", null=True)
 
 
     def __str__(self):
         return self.name
 
 class Offer(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, unique=True)
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, null=True)
     percentage = models.IntegerField()
     finish_date = models.DateField()
 

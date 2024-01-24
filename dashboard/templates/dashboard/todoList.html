@@ -1,12 +1,12 @@
-
 {% extends 'dash_base.html' %}
 {% load static %}
 
 {% block title %}ToDo List{% endblock %}
 
 {% block sign_css %} {% endblock sign_css %}
-        
+
 {% block content %}
+
 
 <div class="container-fluid pt-4 px-4">
     <div class="row g-4">
@@ -14,56 +14,32 @@
             <div class="h-100 bg-secondary rounded p-4">
                 <div class="d-flex align-items-center justify-content-between mb-4">
                     <h6 class="mb-0">To Do List</h6>
-                    <a href="{% url 'dash_todolist' %}">Show All</a>
                 </div>
                 <div class="d-flex mb-2">
-                    <input class="form-control bg-dark border-0" type="text" placeholder="Enter task">
-                    <button type="button" class="btn btn-primary ms-2">Add</button>
-                </div>
-                <div class="d-flex align-items-center border-bottom py-2">
-                    <input class="form-check-input m-0" type="checkbox">
-                    <div class="w-100 ms-3">
-                        <div class="d-flex w-100 align-items-center justify-content-between">
-                            <span>Short task goes here...</span>
-                            <button class="btn btn-sm"><i class="fa fa-times"></i></button>
+                    <input id="newTaskInput" class="form-control bg-dark border-0" type="text" placeholder="Enter task">
+                    <button id="addTaskBtn" type="button" class="btn btn-primary ms-2">Add</button>
+                  </div>
+                  
+                <div id="tasklist">
+                    {% for task in tasks %}
+                        <div data-id="{{ task.id }}" class="d-flex align-items-center border-bottom py-2 task-item">
+                            {% if task.completed %}
+                                <input class="form-check-input m-0 task-checkbox" type="checkbox" checked>
+                            {% else %}
+                                <input class="form-check-input m-0 task-checkbox" type="checkbox">
+                            {% endif %}
+                            <div class="w-100 ms-3">
+                                <div class="d-flex w-100 align-items-center justify-content-between">
+                                    {% if task.completed %}
+                                        <span><del>{{ task.title }}</del></span>
+                                    {% else %}
+                                        <span>{{ task.title }}</span>
+                                    {% endif %}
+                                    <button class="btn btn-sm text-primary task-delete-btn"><i class="fa fa-times"></i></button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="d-flex align-items-center border-bottom py-2">
-                    <input class="form-check-input m-0" type="checkbox">
-                    <div class="w-100 ms-3">
-                        <div class="d-flex w-100 align-items-center justify-content-between">
-                            <span>Short task goes here...</span>
-                            <button class="btn btn-sm"><i class="fa fa-times"></i></button>
-                        </div>
-                    </div>
-                </div>
-                <div class="d-flex align-items-center border-bottom py-2">
-                    <input class="form-check-input m-0" type="checkbox" checked>
-                    <div class="w-100 ms-3">
-                        <div class="d-flex w-100 align-items-center justify-content-between">
-                            <span><del>Short task goes here...</del></span>
-                            <button class="btn btn-sm text-primary"><i class="fa fa-times"></i></button>
-                        </div>
-                    </div>
-                </div>
-                <div class="d-flex align-items-center border-bottom py-2">
-                    <input class="form-check-input m-0" type="checkbox">
-                    <div class="w-100 ms-3">
-                        <div class="d-flex w-100 align-items-center justify-content-between">
-                            <span>Short task goes here...</span>
-                            <button class="btn btn-sm"><i class="fa fa-times"></i></button>
-                        </div>
-                    </div>
-                </div>
-                <div class="d-flex align-items-center pt-2">
-                    <input class="form-check-input m-0" type="checkbox">
-                    <div class="w-100 ms-3">
-                        <div class="d-flex w-100 align-items-center justify-content-between">
-                            <span>Short task goes here...</span>
-                            <button class="btn btn-sm"><i class="fa fa-times"></i></button>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -74,4 +50,114 @@
 {% endblock content %}
 
 {% block side_scripts %}
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Function to get CSRF token from cookies
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+            // Function to generate task HTML
+            function generateTaskHtml(taskId, taskTitle) {
+                return `<div data-id="${taskId}" class="d-flex align-items-center border-bottom py-2 task-item">
+                            <input class="form-check-input m-0 task-checkbox" type="checkbox">
+                            <div class="w-100 ms-3">
+                                <div class="d-flex w-100 align-items-center justify-content-between">
+                                    <span>${taskTitle}</span>
+                                    <button class="btn btn-sm task-delete-btn"><i class="fa fa-times"></i></button>
+                                </div>
+                            </div>
+                        </div>`;
+            }
+
+        // Add Task
+        document.getElementById("addTaskBtn").addEventListener("click", function () {
+            var newTaskInput = document.getElementById("newTaskInput");
+            var title = newTaskInput.value.trim();
+
+            if (title !== "") {
+                // Send AJAX request to add task
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "{% url 'add_task' %}", true);
+                xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function () {
+                    var responseData = JSON.parse(xhr.responseText);
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        console.log(responseData.message);
+                        
+                        var taskContainer = document.getElementById("tasklist"); // Replace with your actual container ID
+                        taskContainer.insertAdjacentHTML('afterend', generateTaskHtml(responseData.task_id, title));
+                        newTaskInput.value = "";
+                    }
+                };
+                xhr.send("title=" + encodeURIComponent(title));
+            } else {
+                // Handle empty title case
+                console.log("Title cannot be empty.");
+            }
+        });
+
+        // Mark Task as Completed
+        document.querySelectorAll(".task-checkbox").forEach(function (checkbox) {
+            checkbox.addEventListener("change", function () {
+                var taskItem = checkbox.closest('.task-item');
+                var taskId = this.closest(".task-item").getAttribute("data-id");
+                // Send AJAX request to mark task as completed
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "{% url 'mark_task_completed' task_id=0 %}".replace("0", taskId), true);
+                xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        var responseData = JSON.parse(xhr.responseText);
+                        if (responseData.complete){
+                            taskItem.querySelector('span').innerHTML = `<del>${taskItem.querySelector('span').innerText}</del>`;
+                        } else {
+                            const delElement = taskItem.querySelector('span del');
+                            delElement.parentNode.insertBefore(delElement.firstChild, delElement);
+                            delElement.remove();
+                        }
+                    }
+                };
+                xhr.send();
+            });
+        });
+
+        // Delete Task
+        document.querySelectorAll(".task-delete-btn").forEach(function(deleteBtn) {
+            deleteBtn.addEventListener("click", function() {
+                var taskItem = this.closest(".task-item");
+                var taskId = taskItem.getAttribute("data-id");
+
+                // Send AJAX request to delete task
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "{% url 'delete_task' task_id=0 %}".replace("0", taskId), true);
+                xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        // Remove the task element once the request is completed
+                        taskItem.remove();
+                        var responseData = JSON.parse(xhr.responseText);
+                        console.log(responseData.message);
+                    }
+                };
+                xhr.send();
+            });
+        });
+
+    });
+</script>
 {% endblock side_scripts %}
