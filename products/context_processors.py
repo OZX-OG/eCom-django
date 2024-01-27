@@ -15,7 +15,6 @@ def cart_items(request):
             items = []
 
 
-
     return {'cartItems': len(items),} 
 
 def crsf_token(request):

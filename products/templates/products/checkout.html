@@ -110,7 +110,7 @@
                         </tbody>
                     </table>
                    
-                    <a class="boxed-btn" onclick="document.getElementById('myForm').submit();">Place Order</a>
+                    <a class="boxed-btn" onclick="document.getElementById('myForm').submit();" >Place Order</a>
                 </div>
             </div>
         </div>
@@ -120,3 +120,73 @@
 
 
 {% endblock %}
+
+{% block side_scripts %}
+<script>
+    $(document).ready(function() {
+        // Get CSRF token from the cookie
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    // Check if the cookie name matches with the CSRF token cookie name
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    
+        $('.boxed-btn').click(function() {
+            // Include CSRF token in the AJAX request header
+            var csrftoken = getCookie('csrftoken');
+            var nameValue = $('#id_name').val();
+            var emailValue = $('#id_email').val();
+            var cityValue = $('#id_city').val();
+            var phoneValue = $('#id_phone_number').val();
+            $.ajax({
+                url: '/products/checkout',
+                type: 'POST',
+                data: $('#myForm').serialize(),
+                headers: {
+                    'X-CSRFToken': csrftoken
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $.ajax({
+                            url: '/products/payout/' + nameValue + '/' + emailValue + '/' + cityValue + '/' + phoneValue + '/',
+                            type: 'GET',
+                            success: function(jsonResponse) {
+                                console.log('JSON data from /products/payout:', jsonResponse);
+                                alert("JSON data from /products/payout")
+                            },
+                            error: function(error) {
+                                console.error('Error fetching JSON data:', error);
+                            }
+                        });
+
+                        console.log("response", response);
+                        console.log('Order placed successfully!');
+                    } else {
+                        // Error in form submission, handle the error
+                        console.error(response.message);
+                        console.log('Error in form submission!');
+                        
+                    }
+                },
+                error: function(error) {
+                    // Handle other errors if any
+                    console.error('Error:', error);
+                }
+            });
+        });
+    });
+    
+</script>
+{% endblock side_scripts %}
+
+

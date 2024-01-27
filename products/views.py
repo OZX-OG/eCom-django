@@ -4,6 +4,7 @@ from django.contrib import messages
 from .forms import ShippingAddressForm
 from .models import *
 import json
+from .telegram_util import send_telegram_message
 
 def get_customer(request):
     try:
@@ -58,27 +59,54 @@ def cart(request):
     }
     return render(request, 'products/cart.html', context)
 
+async def success_for_noti(request):
+
+    await send_telegram_message("kolo tamam")
+    return JsonResponse({'status': 'success'})
+    
 def checkout(request):
     if request.method == 'POST':
         form = ShippingAddressForm(request.POST)
-        if form.is_valid():
-            customer = get_customer(request)
-            order, created = Order.objects.get_or_create(customer=customer, complete=False)
-            
-            items = order.orderitem_set.all()
-            order.complete = True
-            order.save()
 
-            shipping_address = form.save(commit=False)
-            shipping_address.customer = customer
-            shipping_address.order = order
-            shipping_address.save()
+        customer = get_customer(request)
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        orderitems = order.orderitem_set.all()
+        print("1------------------")
+        print(f"order: {order}")
+        print(f"created: {created}")
+        print(f"orderitems: {orderitems}")
+        print("------------------")
+        if orderitems: 
+            if form.is_valid():
+                customer = get_customer(request)
+                order, created = Order.objects.get_or_create(customer=customer, complete=False)
+                
+                items = order.orderitem_set.all()
+                order.complete = True
+                order.save()
 
-            messages.success(request, 'تم تقديم الطلبك بنجاح!')
+                shipping_address = form.save(commit=False)
+                shipping_address.customer = customer
+                shipping_address.order = order
+                shipping_address.save()
+
+                messages.success(request, 'تم تقديم الطلبك بنجاح!')
+
+                print("9bl success")
+                if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+                    response_data = {'success': True}
+                    print("ana f west")
+                    return JsonResponse(response_data)
+                print("ana hna")
+            else:
+                print(form.errors)
+                messages.warning(request, 'Error in the form submission. Please check the errors above.')
+
+                # if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+                #     response_data = {'success': False, 'message': 'Error in the form submission. Please check the errors above.'}
+                #     return JsonResponse(response_data)
         else:
-            print("not valid")
-            print(form.errors)
-            messages.warning(request, 'Error in the form submission. Please check the errors above.')
+                messages.warning(request, 'لا يوجد منتج')
 
     else:
         form = ShippingAddressForm()
@@ -124,6 +152,7 @@ def update_item(request):
         'message': 'Item was added',
         'cart_items_count': len(cart_items_count),
     }
+    
     return JsonResponse(response_data, safe=False)
 
 
@@ -143,7 +172,7 @@ def update_quantity(request, order_item_id, new_quantity):
             'total_price': int(total_price),
         }
 
-        print(response)
+        print(f"Update Quantity: {response}")
         return JsonResponse(response)
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
@@ -151,16 +180,77 @@ def update_quantity(request, order_item_id, new_quantity):
 def remove_item(request, order_item_id):
     try:
         order_item = OrderItem.objects.get(pk=order_item_id)
-        order = order_item.order  # Retrieve the order before deletion
-
+        order = order_item.order  
+        
         # Remove the item
         order_item.delete()
 
         # Recalculate total price
         total_price = order.get_cart_total
-        cartItems = OrderItem.objects.all()
+        cartItems = OrderItem.objects.filter(order=order)
+        response = {'success': True, 'total_price': total_price, 'cartItems': len(cartItems)}
 
-        return JsonResponse({'success': True, 'total_price': total_price, 'cartItems': len(cartItems)})
+        print(f"Delete: {response}")
+        return JsonResponse(response)
 
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
+    
+
+from channels.db import database_sync_to_async
+
+@database_sync_to_async
+def get_last_order():
+    order = Order.objects.filter(complete=True).order_by('-date_order').first()
+    shipping = ShippingAddress.objects.filter(order=order.id).order_by('-date').first()
+    all_items = order.orderitem_set.all()
+
+    amount = 0
+    all_product = []
+    for item in all_items:
+        all_product.append(item.product.name)
+        amount += item.get_total
+        
+    return {
+        "id": order.id, 
+        "name": shipping.name, 
+        "email": shipping.email, 
+        "city": shipping.city, 
+        "phone": shipping.phone_number.national_number, 
+        "date": shipping.date.strftime("%Y-%m-%d %H:%M:%S"), 
+
+        "items": {
+            "items": str(len(all_items)),
+            "product": all_product,
+            "quantity": amount,
+        }, 
+    }
+
+async def sending_noti(request, name, email, city, phone):
+    print("Sending Notification .")
+    print(name)
+    print(email)
+    print(city)
+    print(phone)
+    infos = await get_last_order()
+    msg = f"""- New Order: \n
+Name:    {infos["name"]}
+Email:   {infos["email"]}
+Address: {infos["city"]}
+Phone:   +212 {infos["phone"]}
+
+Product: \n{" || ".join(infos["items"]["product"])}
+
+Items: {infos["items"]["items"]}
+Amount: {infos["items"]["quantity"]} DH
+
+More details: http://localhost:8000/dashboard/Order_Details/{infos["id"]}"""
+    
+    print("-------")
+    print(msg)
+    print("-------")
+
+    await send_telegram_message(f"{msg}")
+    return JsonResponse("what are you do here ?", safe=False)
+
+    

@@ -31,8 +31,8 @@ class RestrictAdminAccessMiddleware:
                 return redirect('error_404')
                 
                 
-        print(response)
-        if response.status_code == 404 or response.status_code == 500:
-            return redirect('error_404')
+        # print(response)
+        # if response.status_code == 404 or response.status_code == 500:
+        #     return redirect('error_404')
 
         return response
