@@ -1,4 +1,5 @@
 Django==4.2.9
+pillow==10.2.0
 django-autoslug==1.9.9
 django-filebrowser==4.0.3
 django-grappelli==3.0.8
