@@ -100,9 +100,9 @@ To properly configure the project, create a `.env` file in the root directory wi
 
 Example `.env` file:
 
-TELEGRAM_TOKEN=50454485321:AAFB1tNU_X8xOQI-rGCWyLhi2JU-SuSlcfIR
+TELEGRAM_TOKEN=your_telegram_bot_token
 
-TELEGRAM_CHAT_ID=4523569878
+TELEGRAM_CHAT_ID=your_telegram_chat_id
 
 
 Ensure to replace `your_telegram_bot_token` and `your_telegram_chat_id` with your actual values.
