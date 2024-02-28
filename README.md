@@ -49,7 +49,7 @@ This Django-based eCommerce website is developed for my family's business. It co
 
 2. Clone the repository:
 ```bash
-git clone https://github.com/OZX-OG/ecom-django.git
+git clone https://github.com/OZX-OG/eCom-django.git
 ```
 3. Set Up Virtual Environment:
 Ensure you have virtual environments installed on your machine. If not, install them using:
