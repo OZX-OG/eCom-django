@@ -1,0 +1,7 @@
+Django==4.2.9
+django-autoslug==1.9.9
+django-filebrowser==4.0.3
+django-grappelli==3.0.8
+django-phonenumber-field==7.3.0
+python-dotenv==1.0.1
+python-telegram-bot==20.7
