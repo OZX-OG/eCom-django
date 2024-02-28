@@ -148,6 +148,7 @@
             var emailValue = $('#id_email').val();
             var cityValue = $('#id_city').val();
             var phoneValue = $('#id_phone_number').val();
+			
             $.ajax({
                 url: '/products/checkout',
                 type: 'POST',
@@ -156,21 +157,20 @@
                     'X-CSRFToken': csrftoken
                 },
                 success: function(response) {
+                    console.log("response", response);
                     if (response.success) {
+                        // Order placed successfully, do something
+                        console.log('Order placed successfully!');
                         $.ajax({
                             url: '/products/payout/' + nameValue + '/' + emailValue + '/' + cityValue + '/' + phoneValue + '/',
                             type: 'GET',
                             success: function(jsonResponse) {
                                 console.log('JSON data from /products/payout:', jsonResponse);
-                                alert("JSON data from /products/payout")
                             },
                             error: function(error) {
                                 console.error('Error fetching JSON data:', error);
                             }
                         });
-
-                        console.log("response", response);
-                        console.log('Order placed successfully!');
                     } else {
                         // Error in form submission, handle the error
                         console.error(response.message);
@@ -187,6 +187,28 @@
     });
     
 </script>
+<!-- <script>
+    function updateUserOrder(productSlug) {
+        var url = '/products/checkout'
+    
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+            },
+            body: JSON.stringify({ 'productSlug': productSlug})
+        })
+            .then((response) => {
+                return response.json();
+            })
+            .then((data) => {
+                // Update the cart information on the page
+                var cartCountElement = document.querySelector('.cart-count');
+                cartCountElement.innerText = data.cart_items_count;
+            });
+    }
+</script> -->
 {% endblock side_scripts %}
 
 
